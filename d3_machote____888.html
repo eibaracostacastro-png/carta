@@ -60,13 +60,24 @@
 
   <div class="no-print">
     <h2>Carta para trámite de licencia tipo D3</h2>
-    <p class="small">Los datos del dueño/empresa están fijos. Solo edita los datos del trabajador. La fecha se coloca automáticamente y nunca será sábado ni domingo.</p>
+    <p class="small">
+      Los datos del dueño/empresa están fijos. Solo editás los datos del trabajador y la sede regional.
+      La fecha se coloca automáticamente (si cae fin de semana, se pasa al lunes).
+    </p>
 
     <div class="fixed">
       <strong>Dueño/Empresa (fijo):</strong><br>
       Neal Ariel Acosta Castro — Céd.: 7-0262-0124<br>
       Inversiones Acosta Durán del Caribe S.A. — Personería: 3-101-899284<br>
       Tel.: 8977-5801
+    </div>
+
+    <h3>Datos de la sede (editables)</h3>
+    <div class="row">
+      <div>
+        <label>Lugar de la sede regional (solo el lugar)</label>
+        <input id="sede_lugar" type="text" placeholder="Ej.: Guápiles, Limón, San José" value="Guápiles">
+      </div>
     </div>
 
     <h3>Datos del trabajador (editables)</h3>
@@ -110,9 +121,7 @@
 (function(){
   const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 
-  // Hace que la fecha NUNCA caiga sábado o domingo:
-  // - Si es sábado -> la pasa al lunes (+2 días)
-  // - Si es domingo -> la pasa al lunes (+1 día)
+  // Ajusta fecha a día laboral (lunes-viernes)
   function getFechaLaboral(baseDate){
     const d = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
     const day = d.getDay(); // 0 = domingo, 6 = sábado
@@ -138,7 +147,11 @@
     const localidad = 'Guápiles, Pococí, Limón';
     const tipoLic = 'D3';
 
-    // Datos editables
+    // Datos sede
+    let sedeLugar = (document.getElementById('sede_lugar').value || '').trim();
+    if (!sedeLugar) sedeLugar = 'Guápiles';
+
+    // Datos trabajador
     const interesado = (document.getElementById('interesado').value || '').trim();
     const cedInt = (document.getElementById('ced_int').value || '').trim();
     const direccion = (document.getElementById('direccion').value || '').trim();
@@ -151,18 +164,18 @@
     }
 
     const hoy = new Date();
-    const fechaLab = getFechaLaboral(hoy); // <-- aquí se fuerza lunes a viernes
+    const fechaLab = getFechaLaboral(hoy);
     const fechaTxt = fechaEnLetras(fechaLab);
 
-    // Espaciado similar al Word: interlineado 1.15, margen inferior pequeño
+    // Espaciado tipo Word: interlineado 1.15, margencito abajo
     const pStyle = "margin:0 0 6px; line-height:1.15; text-align:justify;";
 
-    // Versión para mostrar en pantalla/imprimir (con estilos inline)
+    // Carta para mostrar/imprimir
     const cartaHTML = `
       <div style="text-align:right; margin-bottom:14px; line-height:1.15;">${fechaTxt}</div>
 
       <p style="${pStyle}"><strong>Señores:</strong><br>
-      Sede Regional de Educación Vial Guápiles<br>
+      Sede Regional de Educación Vial ${sedeLugar}<br>
       Departamento de Evaluación de Conductores<br>
       Dirección General de Educación Vial<br>
       Ministerio de Obras Públicas y Transportes (MOPT)</p>
@@ -175,7 +188,7 @@
 
       <p style="${pStyle}">Por lo anterior, solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la <strong>licencia tipo ${tipoLic}</strong>.</p>
 
-      <p style="${pStyle}">Agradezco de antemano la atención prestada a esta solicitud.</p>
+      <p style="${pStyle}">Agradezco de antemano la atención prestada a esta solicitud。</p>
 
       <p style="${pStyle}">Se extiende la presente en ${localidad}, a los ${fechaLab.getDate()} del mes de ${meses[fechaLab.getMonth()]} del año ${fechaLab.getFullYear()}.</p>
 
@@ -190,12 +203,12 @@
       Tel.: ${telEmpresa}</p>
     `;
 
-    // Versión simplificada para DOCX (sin estilos CSS, para que Word aplique su formato 1.15 y separación de párrafos)
+    // Versión para DOCX (sin estilos CSS, solo párrafos limpios)
     window._ultimaCartaDocxHTML = `
       <p>${fechaTxt}</p>
 
       <p>Señores:<br>
-      Sede Regional de Educación Vial Guápiles<br>
+      Sede Regional de Educación Vial ${sedeLugar}<br>
       Departamento de Evaluación de Conductores<br>
       Dirección General de Educación Vial<br>
       Ministerio de Obras Públicas y Transportes (MOPT)</p>
@@ -236,14 +249,13 @@
       return;
     }
 
-    // Usamos la versión simple sin estilos para que Word respete sus párrafos
     const inner = window._ultimaCartaDocxHTML || cont.innerHTML;
 
     const html = "<!DOCTYPE html><html><head><meta charset='utf-8'></head><body>" +
                  inner +
                  "</body></html>";
 
-    const blob = window.htmlDocx.asBlob(html);  // DOCX moderno
+    const blob = window.htmlDocx.asBlob(html);
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
