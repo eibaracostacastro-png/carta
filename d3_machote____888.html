@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Carta D3 — Solo datos del trabajador editables</title>
+<title>Carta D — Solo datos del trabajador editables</title>
 <style>
   body{
     font-family:Arial, sans-serif;
@@ -14,7 +14,7 @@
   }
   h2{margin-top:0}
   label{display:block; margin-top:12px; font-weight:600;}
-  input[type=text], input[type=email]{
+  input[type=text], input[type=email], select{
     width:100%; padding:8px; box-sizing:border-box; margin-top:6px;
   }
   button{margin-top:12px; padding:10px 14px; font-weight:700; cursor:pointer;}
@@ -59,9 +59,10 @@
 <body>
 
   <div class="no-print">
-    <h2>Carta para trámite de licencia tipo D3</h2>
+    <h2>Carta para trámite de licencia tipo D</h2>
     <p class="small">
-      Los datos del dueño/empresa están fijos. Solo editás los datos del trabajador y la sede regional.
+      Los datos del dueño/empresa están fijos. Solo editás los datos del trabajador,
+      la sede regional y el tipo de licencia (D1, D2 o D3).<br>
       La fecha se coloca automáticamente (si cae fin de semana, se pasa al lunes).
     </p>
 
@@ -77,6 +78,14 @@
       <div>
         <label>Lugar de la sede regional (solo el lugar)</label>
         <input id="sede_lugar" type="text" placeholder="Ej.: Guápiles, Limón, San José" value="Guápiles">
+      </div>
+      <div>
+        <label>Tipo de licencia</label>
+        <select id="lic_tipo">
+          <option value="D1">D1</option>
+          <option value="D2">D2</option>
+          <option value="D3" selected>D3</option>
+        </select>
       </div>
     </div>
 
@@ -145,11 +154,13 @@
     const pj = '3-101-899284';
     const telEmpresa = '8977-5801';
     const localidad = 'Guápiles, Pococí, Limón';
-    const tipoLic = 'D3';
 
     // Datos sede
     let sedeLugar = (document.getElementById('sede_lugar').value || '').trim();
     if (!sedeLugar) sedeLugar = 'Guápiles';
+
+    let tipoLic = (document.getElementById('lic_tipo').value || '').trim();
+    if (!tipoLic) tipoLic = 'D3';
 
     // Datos trabajador
     const interesado = (document.getElementById('interesado').value || '').trim();
@@ -188,7 +199,7 @@
 
       <p style="${pStyle}">Por lo anterior, solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la <strong>licencia tipo ${tipoLic}</strong>.</p>
 
-      <p style="${pStyle}">Agradezco de antemano la atención prestada a esta solicitud。</p>
+      <p style="${pStyle}">Agradezco de antemano la atención prestada a esta solicitud.</p>
 
       <p style="${pStyle}">Se extiende la presente en ${localidad}, a los ${fechaLab.getDate()} del mes de ${meses[fechaLab.getMonth()]} del año ${fechaLab.getFullYear()}.</p>
 
@@ -259,7 +270,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'carta_licencia_D3.docx';
+    a.download = 'carta_licencia_D.docx';
     document.body.appendChild(a);
     a.click();
     setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 800);
