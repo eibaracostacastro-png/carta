@@ -6,7 +6,7 @@
   <style>
     body {
       font-family: "Times New Roman", serif;
-      background: #f0f0f0;
+      background: #f2f2f2;
       margin: 0;
       padding: 20px;
     }
@@ -23,11 +23,11 @@
       padding: 15px 20px;
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       font-size: 14px;
     }
     .form-group {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     label {
       display: block;
@@ -53,15 +53,15 @@
     }
     .carta {
       background: #ffffff;
-      padding: 40px 50px;
+      padding: 35px 50px;
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.15);
-      line-height: 1.15;
+      line-height: 1.1; /* más compacto */
       font-size: 14px;
       white-space: pre-wrap;
     }
     .acciones {
-      margin-top: 15px;
+      margin-top: 10px;
       text-align: right;
     }
     @media print {
@@ -84,33 +84,33 @@
 
     <div class="formulario">
       <div class="form-group">
-        <label for="sedeCiudad">Ciudad de la sede regional (ej.: Limón, Guápiles, Alajuela):</label>
-        <input type="text" id="sedeCiudad" value="Limón">
+        <label for="sedeCiudad">Ciudad de la sede regional:</label>
+        <input type="text" id="sedeCiudad" placeholder="Ej.: Limón, Guápiles, Alajuela">
       </div>
 
       <div class="form-group">
         <label for="nombreTrabajador">Nombre completo del trabajador:</label>
-        <input type="text" id="nombreTrabajador" value="Axel Aldair Zúñiga Brown">
+        <input type="text" id="nombreTrabajador" placeholder="Nombre del trabajador">
       </div>
 
       <div class="form-group">
         <label for="cedulaTrabajador">Cédula del trabajador:</label>
-        <input type="text" id="cedulaTrabajador" value="702800350">
+        <input type="text" id="cedulaTrabajador" placeholder="0-0000-0000">
       </div>
 
       <div class="form-group">
-        <label for="vecino">Lugar de vecindad (ej.: Guápiles, Pococí, Limón):</label>
-        <input type="text" id="vecino" value="Guápiles, Pococí, Limón">
+        <label for="vecino">Lugar de vecindad:</label>
+        <input type="text" id="vecino" placeholder="Ej.: Guápiles, Pococí, Limón">
       </div>
 
       <div class="form-group">
         <label for="correo">Correo electrónico del trabajador:</label>
-        <input type="email" id="correo" value="axelbrown44@gmail.com">
+        <input type="email" id="correo" placeholder="correo@ejemplo.com">
       </div>
 
       <div class="form-group">
         <label for="telefono">Teléfono del trabajador:</label>
-        <input type="text" id="telefono" value="7116-9777">
+        <input type="text" id="telefono" placeholder="0000-0000">
       </div>
 
       <div class="form-group">
@@ -145,91 +145,64 @@
       return `${dia} de ${mes} de ${anio}`;
     }
 
-    // Ajusta la fecha de la carta para que siempre sea de lunes a viernes
     function ajustarFechaHabil(fecha) {
-      const f = new Date(fecha.getTime());
-      const diaSemana = f.getDay(); // 0=Dom, 6=Sab
-
-      if (diaSemana === 0) {        // Domingo
-        f.setDate(f.getDate() - 2); // Viernes
-      } else if (diaSemana === 6) { // Sábado
-        f.setDate(f.getDate() - 1); // Viernes
-      }
+      const f = new Date(fecha);
+      const d = f.getDay();
+      if (d === 6) f.setDate(f.getDate() - 1);
+      if (d === 0) f.setDate(f.getDate() - 2);
       return f;
     }
 
-    // Genera la fecha de inicio de labores:
-    // 1 mes antes de la fecha actual, restando entre 3 y 5 días
-    function generarFechaInicioTrabajo(fechaBase) {
-      const f = new Date(fechaBase.getTime());
-      // un mes antes
+    function generarFechaInicioTrabajo(base) {
+      const f = new Date(base);
       f.setMonth(f.getMonth() - 1);
-      // restar entre 3 y 5 días aleatorio
-      const diasExtra = 3 + Math.floor(Math.random() * 3); // 3, 4 o 5
+      const diasExtra = 3 + Math.floor(Math.random() * 3);
       f.setDate(f.getDate() - diasExtra);
       return f;
     }
 
     function generarCarta() {
-      const sedeCiudad = document.getElementById("sedeCiudad").value.trim() || "Guápiles";
-      const nombreTrabajador = document.getElementById("nombreTrabajador").value.trim() || "Nombre del trabajador";
-      const cedulaTrabajador = document.getElementById("cedulaTrabajador").value.trim() || "0-0000-0000";
-      const vecino = document.getElementById("vecino").value.trim() || "Guápiles, Pococí, Limón";
-      const correo = document.getElementById("correo").value.trim() || "correo@ejemplo.com";
-      const telefono = document.getElementById("telefono").value.trim() || "0000-0000";
+      const sedeCiudad = document.getElementById("sedeCiudad").value.trim() || "____________";
+      const nombreTrabajador = document.getElementById("nombreTrabajador").value.trim() || "_____________________________";
+      const cedulaTrabajador = document.getElementById("cedulaTrabajador").value.trim() || "___________";
+      const vecino = document.getElementById("vecino").value.trim() || "_______________________";
+      const correo = document.getElementById("correo").value.trim() || "_______________________";
+      const telefono = document.getElementById("telefono").value.trim() || "___________";
       const tipoLicencia = document.getElementById("tipoLicencia").value;
 
-      // Fecha de hoy (ajustada a día hábil)
-      const hoyReal = new Date();
-      const fechaCarta = ajustarFechaHabil(hoyReal);
-
-      // Fecha de inicio de labores (un mes antes con 3–5 días menos)
-      const fechaInicio = generarFechaInicioTrabajo(hoyReal);
-
-      const fechaCartaLinea = formatearFecha(fechaCarta);
+      const hoy = ajustarFechaHabil(new Date());
+      const fechaInicio = generarFechaInicioTrabajo(hoy);
+      const fechaCartaLinea = formatearFecha(hoy);
       const fechaInicioTexto = formatearFecha(fechaInicio);
-
       const sedeLinea = `Sede Regional de Educación Vial ${sedeCiudad}`;
 
-      const htmlCarta = `
+      document.getElementById("carta").innerHTML = `
 <b>${fechaCartaLinea}</b><br><br>
-
 <b>Señores:</b><br>
 <b>${sedeLinea}</b><br>
 <b>Departamento de Evaluación de Conductores</b><br>
 <b>Dirección General de Educación Vial</b><br>
 <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
 
-<b>Estimados señores:</b><br><br>
-
-Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>patrón</b> de la empresa <b>Inversiones Acosta Durán del Caribe S.A.</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombreTrabajador}</b>, cédula de identidad <b>${cedulaTrabajador}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, labora actualmente para esta empresa desde el día <b>${fechaInicioTexto}</b>.<br><br>
-
-Certifico que el señor <b>${nombreTrabajador}</b> <b>opera montacargas</b> y cuenta con amplia experiencia en la manipulación y operación de dicha maquinaria, desempeñándose de manera <b>responsable, segura y competente</b> en sus funciones.<br><br>
-
-Por lo anterior, <b>solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la licencia tipo ${tipoLicencia}.</b><br><br>
-
-Agradezco de antemano la atención prestada a esta solicitud.<br><br>
-
-Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${fechaCarta.getDate()}</b> días del mes de <b>${MESES[fechaCarta.getMonth()]}</b> del año <b>${fechaCarta.getFullYear()}</b>.<br><br>
-
-Atentamente,<br><br><br>
+<b>Estimados señores:</b><br>
+Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>patrón</b> de la empresa <b>Inversiones Acosta Durán del Caribe S.A.</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombreTrabajador}</b>, cédula de identidad <b>${cedulaTrabajador}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, labora actualmente para esta empresa desde el día <b>${fechaInicioTexto}</b>.<br>
+Certifico que el señor <b>${nombreTrabajador}</b> <b>opera montacargas</b> y cuenta con amplia experiencia en la manipulación y operación de dicha maquinaria, desempeñándose de manera <b>responsable, segura y competente</b> en sus funciones.<br>
+Por lo anterior, <b>solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la licencia tipo ${tipoLicencia}.</b><br>
+Agradezco de antemano la atención prestada a esta solicitud.<br>
+Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
+Atentamente,<br><br>
 ___________________________<br>
 <b>Neal Ariel Acosta Castro</b><br>
 Cédula: <b>7-0262-0124</b><br>
 <b>Patrón</b><br>
 <b>Inversiones Acosta Durán del Caribe S.A.</b><br>
-Tel.: <b>8977-5801</b>
-      `;
-
-      document.getElementById("carta").innerHTML = htmlCarta;
+Tel.: <b>8977-5801</b>`;
     }
 
-    // Generar una carta de ejemplo al cargar
     window.addEventListener("DOMContentLoaded", generarCarta);
   </script>
 </body>
 </html>
-
 
 
 
