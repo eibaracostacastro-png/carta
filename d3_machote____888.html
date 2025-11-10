@@ -56,8 +56,8 @@
       font-size: 13px;
     }
 
-    textarea {
-      resize: vertical;
+    input[readonly] {
+      background-color: #f7f7f7;
     }
 
     button {
@@ -91,16 +91,12 @@
 
     .carta {
       font-size: 13px;
-      line-height: 1.25; /* menos espacio entre líneas */
+      line-height: 1.25;
     }
 
     .carta p {
       margin: 4px 0;
       text-align: justify;
-    }
-
-    .carta .centrado {
-      text-align: center;
     }
 
     .carta .firma {
@@ -153,26 +149,26 @@
 
       <hr>
 
-      <h3>Datos del patrón / empresa</h3>
+      <h3>Datos del patrón / empresa (fijos)</h3>
       <div class="form-row">
         <div>
           <label for="nombrePatron">Nombre del patrón</label>
-          <input type="text" id="nombrePatron" placeholder="Neal Ariel Acosta Castro">
+          <input type="text" id="nombrePatron" value="Neal Ariel Acosta Castro" readonly>
         </div>
         <div>
           <label for="cedulaPatron">Cédula del patrón</label>
-          <input type="text" id="cedulaPatron" placeholder="7-0262-0124">
+          <input type="text" id="cedulaPatron" value="7-0262-0124" readonly>
         </div>
       </div>
 
       <div class="form-row">
         <div>
           <label for="nombreEmpresa">Nombre de la empresa</label>
-          <input type="text" id="nombreEmpresa" placeholder="Inversiones Acosta Durán del Caribe S.A.">
+          <input type="text" id="nombreEmpresa" value="Inversiones Acosta Durán del Caribe S.A." readonly>
         </div>
         <div>
           <label for="personeria">Personería jurídica</label>
-          <input type="text" id="personeria" placeholder="3-101-899284">
+          <input type="text" id="personeria" value="3-101-899284" readonly>
         </div>
       </div>
 
@@ -212,6 +208,23 @@
         </div>
       </div>
 
+      <hr>
+
+      <h3>Opciones de fecha de inicio laboral</h3>
+      <div class="form-row">
+        <div>
+          <label for="modoFecha">Modo de fecha</label>
+          <select id="modoFecha">
+            <option value="auto">Automática (1 mes y 15 días antes de hoy)</option>
+            <option value="manual">Manual (seleccione la fecha)</option>
+          </select>
+        </div>
+        <div>
+          <label for="fechaInicioManual">Fecha de inicio (si es manual)</label>
+          <input type="date" id="fechaInicioManual">
+        </div>
+      </div>
+
       <button id="btnGenerar">Generar carta</button>
       <button id="btnImprimir" onclick="window.print()">Imprimir</button>
     </div>
@@ -235,10 +248,20 @@
       return dia + " de " + mes + " de " + anio;
     }
 
-    function calcularFechaInicioLaboral() {
+    function formatearFechaDesdeInput(valor) {
+      if (!valor) return "";
+      const partes = valor.split("-");
+      if (partes.length !== 3) return "";
+      const anio = parseInt(partes[0], 10);
+      const mes = parseInt(partes[1], 10) - 1;
+      const dia = parseInt(partes[2], 10);
+      const fecha = new Date(anio, mes, dia);
+      return formatearFechaEsp(fecha);
+    }
+
+    function calcularFechaInicioLaboralAuto() {
       const hoy = new Date();
-      // Restar aproximadamente 1 mes y 15 días (45 días)
-      const ms45dias = 45 * 24 * 60 * 60 * 1000;
+      const ms45dias = 45 * 24 * 60 * 60 * 1000; // 1 mes y 15 días aprox.
       const inicio = new Date(hoy.getTime() - ms45dias);
       return formatearFechaEsp(inicio);
     }
@@ -268,10 +291,10 @@
       const sedeRegional = document.getElementById("sedeRegional").value || "Guápiles";
       const licenseType = document.getElementById("licenseType").value;
 
-      const nombrePatron = document.getElementById("nombrePatron").value || "[Nombre del patrón]";
-      const cedulaPatron = document.getElementById("cedulaPatron").value || "[Cédula del patrón]";
-      const nombreEmpresa = document.getElementById("nombreEmpresa").value || "[Nombre de la empresa]";
-      const personeria = document.getElementById("personeria").value || "[Personería jurídica]";
+      const nombrePatron = document.getElementById("nombrePatron").value;
+      const cedulaPatron = document.getElementById("cedulaPatron").value;
+      const nombreEmpresa = document.getElementById("nombreEmpresa").value;
+      const personeria = document.getElementById("personeria").value;
 
       const nombreTrabajador = document.getElementById("nombreTrabajador").value || "[Nombre del trabajador]";
       const cedulaTrabajador = document.getElementById("cedulaTrabajador").value || "[Cédula del trabajador]";
@@ -282,7 +305,17 @@
 
       const hoy = new Date();
       const fechaHoy = formatearFechaEsp(hoy);
-      const fechaInicioLaboral = calcularFechaInicioLaboral();
+
+      const modoFecha = document.getElementById("modoFecha").value;
+      const fechaManualValor = document.getElementById("fechaInicioManual").value;
+
+      let fechaInicioLaboral = "";
+      if (modoFecha === "manual" && fechaManualValor) {
+        fechaInicioLaboral = formatearFechaDesdeInput(fechaManualValor);
+      } else {
+        fechaInicioLaboral = calcularFechaInicioLaboralAuto();
+      }
+
       const { textoVehiculo, textoDescripcion } = obtenerTextosPorLicencia(licenseType);
 
       const textoPuestoExtra = puestoExtra
@@ -300,21 +333,21 @@
 
         <p><strong>Estimados señores:</strong></p>
 
-        <p>Por medio de la presente, yo, <strong>${nombrePatron}</strong>, cédula de identidad <strong>${cedulaPatron}</strong>, 
-        en mi condición de <strong>patrón</strong> y representante de la empresa <strong>${nombreEmpresa}</strong>, 
-        personería jurídica <strong>${personeria}</strong>, hago constar que el(la) señor(a) 
-        <strong>${nombreTrabajador}</strong>, cédula de identidad <strong>${cedulaTrabajador}</strong>, vecino(a) de 
-        <strong>${direccionTrabajador}</strong>, correo electrónico: <strong>${correoTrabajador}</strong> y teléfono 
+        <p>Por medio de la presente, yo, <strong>${nombrePatron}</strong>, cédula de identidad <strong>${cedulaPatron}</strong>,
+        en mi condición de <strong>patrón</strong> y representante de la empresa <strong>${nombreEmpresa}</strong>,
+        personería jurídica <strong>${personeria}</strong>, hago constar que el(la) señor(a)
+        <strong>${nombreTrabajador}</strong>, cédula de identidad <strong>${cedulaTrabajador}</strong>, vecino(a) de
+        <strong>${direccionTrabajador}</strong>, correo electrónico: <strong>${correoTrabajador}</strong> y teléfono
         <strong>${telefonoTrabajador}</strong>, labora actualmente para esta empresa desde el día <strong>${fechaInicioLaboral}</strong>.</p>
 
-        <p>Certifico que el(la) señor(a) <strong>${nombreTrabajador}</strong> se desempeña como conductor de 
-        <strong>${textoVehiculo}</strong>${textoPuestoExtra}, realizando labores habituales de transporte de carga 
+        <p>Certifico que el(la) señor(a) <strong>${nombreTrabajador}</strong> se desempeña como conductor de
+        <strong>${textoVehiculo}</strong>${textoPuestoExtra}, realizando labores habituales de transporte de carga
         para nuestra compañía.</p>
 
-        <p>La presente constancia se emite a solicitud de la parte interesada ${textoDescripcion} 
+        <p>La presente constancia se emite a solicitud de la parte interesada ${textoDescripcion}
         ante la Dirección General de Educación Vial del MOPT.</p>
 
-        <p>Para los efectos que estime pertinentes, extiendo la presente en ${lugar}.</p>
+        <p>Para los efectos que estime pertinentes, extiendo la presente en <strong>${lugar}</strong>.</p>
 
         <div class="firma">
           <p>Atentamente,</p>
@@ -323,14 +356,12 @@
           <p><strong>${nombrePatron}</strong></p>
           <p>Patrón / Representante de <strong>${nombreEmpresa}</strong></p>
           <p>Cédula: <strong>${cedulaPatron}</strong></p>
-          <p>Teléfono: <strong>${telefonoTrabajador}</strong></p>
         </div>
       `;
 
       document.getElementById("carta").innerHTML = cartaHTML;
     });
 
-    // Generar una primera versión al cargar (opcional)
     window.addEventListener("load", function () {
       document.getElementById("btnGenerar").click();
     });
