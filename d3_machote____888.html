@@ -49,7 +49,7 @@
       font-size: 12px;
     }
 
-    input, select, textarea {
+    input, select {
       width: 100%;
       padding: 4px 6px;
       box-sizing: border-box;
@@ -99,13 +99,9 @@
       text-align: justify;
     }
 
-    .carta .firma {
+    .firma {
       margin-top: 40px;
       text-align: left;
-    }
-
-    .carta .firma p {
-      margin: 2px 0;
     }
 
     @media print {
@@ -237,15 +233,17 @@
   </div>
 
   <script>
-    function formatearFechaEsp(fecha) {
+    function formatearFechaEspCompleta(fecha) {
+      const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
       const meses = [
         "enero", "febrero", "marzo", "abril", "mayo", "junio",
         "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
       ];
+      const diaSemana = dias[fecha.getDay()];
       const dia = fecha.getDate();
       const mes = meses[fecha.getMonth()];
       const anio = fecha.getFullYear();
-      return dia + " de " + mes + " de " + anio;
+      return `${diaSemana} ${dia} de ${mes} del ${anio}`;
     }
 
     function formatearFechaDesdeInput(valor) {
@@ -256,14 +254,19 @@
       const mes = parseInt(partes[1], 10) - 1;
       const dia = parseInt(partes[2], 10);
       const fecha = new Date(anio, mes, dia);
-      return formatearFechaEsp(fecha);
+      return formatearFechaEspCompleta(fecha);
     }
 
     function calcularFechaInicioLaboralAuto() {
       const hoy = new Date();
       const ms45dias = 45 * 24 * 60 * 60 * 1000; // 1 mes y 15 días aprox.
       const inicio = new Date(hoy.getTime() - ms45dias);
-      return formatearFechaEsp(inicio);
+      return formatearFechaEspCompleta(inicio);
+    }
+
+    function formatearFechaHoy() {
+      const hoy = new Date();
+      return formatearFechaEspCompleta(hoy);
     }
 
     function obtenerTextosPorLicencia(tipo) {
@@ -291,10 +294,10 @@
       const sedeRegional = document.getElementById("sedeRegional").value || "Guápiles";
       const licenseType = document.getElementById("licenseType").value;
 
-      const nombrePatron = document.getElementById("nombrePatron").value;
-      const cedulaPatron = document.getElementById("cedulaPatron").value;
-      const nombreEmpresa = document.getElementById("nombreEmpresa").value;
-      const personeria = document.getElementById("personeria").value;
+      const nombrePatron = "Neal Ariel Acosta Castro";
+      const cedulaPatron = "7-0262-0124";
+      const nombreEmpresa = "Inversiones Acosta Durán del Caribe S.A.";
+      const personeria = "3-101-899284";
 
       const nombreTrabajador = document.getElementById("nombreTrabajador").value || "[Nombre del trabajador]";
       const cedulaTrabajador = document.getElementById("cedulaTrabajador").value || "[Cédula del trabajador]";
@@ -303,9 +306,7 @@
       const telefonoTrabajador = document.getElementById("telefonoTrabajador").value || "[Teléfono del trabajador]";
       const puestoExtra = document.getElementById("puestoExtra").value;
 
-      const hoy = new Date();
-      const fechaHoy = formatearFechaEsp(hoy);
-
+      const fechaHoy = formatearFechaHoy();
       const modoFecha = document.getElementById("modoFecha").value;
       const fechaManualValor = document.getElementById("fechaInicioManual").value;
 
@@ -317,10 +318,7 @@
       }
 
       const { textoVehiculo, textoDescripcion } = obtenerTextosPorLicencia(licenseType);
-
-      const textoPuestoExtra = puestoExtra
-        ? `, desempeñando el puesto de ${puestoExtra}`
-        : "";
+      const textoPuestoExtra = puestoExtra ? `, desempeñando el puesto de ${puestoExtra}` : "";
 
       const cartaHTML = `
         <p style="text-align:right;"><strong>${lugar}, ${fechaHoy}</strong></p>
@@ -362,7 +360,7 @@
       document.getElementById("carta").innerHTML = cartaHTML;
     });
 
-    window.addEventListener("load", function () {
+    window.addEventListener("load", () => {
       document.getElementById("btnGenerar").click();
     });
   </script>
