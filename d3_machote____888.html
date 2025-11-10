@@ -261,10 +261,19 @@
     }
 
     function calcularFechaInicioLaboralAuto() {
-      const hoy = new Date();
-      const ms45dias = 45 * 24 * 60 * 60 * 1000;
-      const inicio = new Date(hoy.getTime() - ms45dias);
-      return formatearFechaEspCompleta(inicio);
+  const hoy = new Date();
+
+  // Rango "natural": entre 30 y 45 días hacia atrás (1 mes a 1 mes + 15 días)
+  const diasMin = 30;
+  const diasMax = 45;
+
+  // Número de días aleatorio entre 30 y 45
+  const diasARestar = diasMin + Math.floor(Math.random() * (diasMax - diasMin + 1));
+
+  const msDias = diasARestar * 24 * 60 * 60 * 1000;
+  const inicio = new Date(hoy.getTime() - msDias);
+
+  return formatearFechaEspCompleta(inicio);
     }
 
     function formatearFechaHoy() {
@@ -357,3 +366,4 @@ Cédula: 7-0262-0124
   </script>
 </body>
 </html>
+
