@@ -27,7 +27,7 @@
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       margin-bottom: 20px;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .form-row {
@@ -46,14 +46,14 @@
       display: block;
       font-weight: bold;
       margin-bottom: 2px;
-      font-size: 12px;
+      font-size: 11px;
     }
 
     input, select {
       width: 100%;
-      padding: 4px 6px;
+      padding: 3px 5px;
       box-sizing: border-box;
-      font-size: 13px;
+      font-size: 12px;
     }
 
     input[readonly] {
@@ -62,8 +62,8 @@
 
     button {
       margin-top: 8px;
-      padding: 8px 14px;
-      font-size: 14px;
+      padding: 7px 12px;
+      font-size: 13px;
       border-radius: 4px;
       border: none;
       cursor: pointer;
@@ -88,7 +88,7 @@
 
     .carta-contenedor {
       background: #ffffff;
-      padding: 25px 35px;
+      padding: 20px 25px;
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       min-height: 500px;
@@ -96,32 +96,39 @@
     }
 
     .carta {
-      font-size: 13px;
-      line-height: 1.25;
+      font-size: 12px;
+      line-height: 1.18; /* más cerradito para que quepa en una página */
     }
 
     .carta p {
-      margin: 4px 0;
+      margin: 2px 0;
       text-align: justify;
     }
 
     .firma {
-      margin-top: 40px;
+      margin-top: 30px;
       text-align: left;
       white-space: pre-line;
+      font-size: 12px;
     }
 
     @media print {
       body {
         background: #ffffff;
+        margin: 0;
+        padding: 0;
       }
       .formulario, #btnImprimir, #btnGenerar, #btnPDF, h1 {
         display: none !important;
       }
+      .contenedor {
+        max-width: 100%;
+        margin: 0;
+      }
       .carta-contenedor {
         box-shadow: none;
         margin: 0;
-        padding: 0;
+        padding: 20mm;
       }
     }
   </style>
@@ -218,7 +225,7 @@
         <div>
           <label for="modoFecha">Modo de fecha</label>
           <select id="modoFecha">
-            <option value="auto">Automática (1 mes y 15 días antes de hoy)</option>
+            <option value="auto">Automática (entre 1 mes y 1 mes + 15 días)</option>
             <option value="manual">Manual (seleccione la fecha)</option>
           </select>
         </div>
@@ -238,7 +245,9 @@
     </div>
   </div>
 
+  <!-- Librería para generar PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <script>
     function formatearFechaEspCompleta(fecha) {
       const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
@@ -256,28 +265,28 @@
     function formatearFechaDesdeInput(valor) {
       if (!valor) return "";
       const partes = valor.split("-");
-      const fecha = new Date(partes[0], partes[1]-1, partes[2]);
+      if (partes.length !== 3) return "";
+      const anio = parseInt(partes[0], 10);
+      const mes = parseInt(partes[1], 10) - 1;
+      const dia = parseInt(partes[2], 10);
+      const fecha = new Date(anio, mes, dia);
       return formatearFechaEspCompleta(fecha);
     }
 
+    // Fecha automática "natural": entre 30 y 45 días hacia atrás
     function calcularFechaInicioLaboralAuto() {
-  const hoy = new Date();
-
-  // Rango "natural": entre 30 y 45 días hacia atrás (1 mes a 1 mes + 15 días)
-  const diasMin = 30;
-  const diasMax = 45;
-
-  // Número de días aleatorio entre 30 y 45
-  const diasARestar = diasMin + Math.floor(Math.random() * (diasMax - diasMin + 1));
-
-  const msDias = diasARestar * 24 * 60 * 60 * 1000;
-  const inicio = new Date(hoy.getTime() - msDias);
-
-  return formatearFechaEspCompleta(inicio);
+      const hoy = new Date();
+      const diasMin = 30;
+      const diasMax = 45;
+      const diasARestar = diasMin + Math.floor(Math.random() * (diasMax - diasMin + 1));
+      const msDias = diasARestar * 24 * 60 * 60 * 1000;
+      const inicio = new Date(hoy.getTime() - msDias);
+      return formatearFechaEspCompleta(inicio);
     }
 
     function formatearFechaHoy() {
-      return formatearFechaEspCompleta(new Date());
+      const hoy = new Date();
+      return formatearFechaEspCompleta(hoy);
     }
 
     function obtenerTextosPorLicencia(tipo) {
@@ -299,27 +308,34 @@
     }
 
     document.getElementById("btnGenerar").addEventListener("click", function () {
-      const lugar = document.getElementById("lugar").value;
-      const sedeRegional = document.getElementById("sedeRegional").value;
+      const lugar = document.getElementById("lugar").value || "Guápiles, Pococí, Limón";
+      const sedeRegional = document.getElementById("sedeRegional").value || "Guápiles";
       const licenseType = document.getElementById("licenseType").value;
 
       const nombreTrabajador = document.getElementById("nombreTrabajador").value || "[Nombre del trabajador]";
-      const cedulaTrabajador = document.getElementById("cedulaTrabajador").value || "[Cédula]";
-      const direccionTrabajador = document.getElementById("direccionTrabajador").value || "[Dirección]";
-      const correoTrabajador = document.getElementById("correoTrabajador").value || "[Correo]";
-      const telefonoTrabajador = document.getElementById("telefonoTrabajador").value || "[Teléfono]";
+      const cedulaTrabajador = document.getElementById("cedulaTrabajador").value || "[Cédula del trabajador]";
+      const direccionTrabajador = document.getElementById("direccionTrabajador").value || "[Dirección del trabajador]";
+      const correoTrabajador = document.getElementById("correoTrabajador").value || "[Correo del trabajador]";
+      const telefonoTrabajador = document.getElementById("telefonoTrabajador").value || "[Teléfono del trabajador]";
       const puestoExtra = document.getElementById("puestoExtra").value;
 
       const fechaHoy = formatearFechaHoy();
       const modoFecha = document.getElementById("modoFecha").value;
-      const fechaManual = document.getElementById("fechaInicioManual").value;
-      const fechaInicio = modoFecha === "manual" && fechaManual ? formatearFechaDesdeInput(fechaManual) : calcularFechaInicioLaboralAuto();
+      const fechaManualValor = document.getElementById("fechaInicioManual").value;
+
+      let fechaInicioLaboral = "";
+      if (modoFecha === "manual" && fechaManualValor) {
+        fechaInicioLaboral = formatearFechaDesdeInput(fechaManualValor);
+      } else {
+        fechaInicioLaboral = calcularFechaInicioLaboralAuto();
+      }
 
       const { vehiculo, descripcion } = obtenerTextosPorLicencia(licenseType);
-      const puesto = puestoExtra ? `, desempeñando el puesto de ${puestoExtra}` : "";
+      const textoPuestoExtra = puestoExtra ? `, desempeñando el puesto de <strong>${puestoExtra}</strong>` : "";
 
       const cartaHTML = `
         <p style="text-align:right;"><strong>${lugar}, ${fechaHoy}</strong></p>
+
         <p><strong>Señores:</strong><br>
         <strong>Sede Regional de Educación Vial ${sedeRegional}</strong><br>
         Departamento de Evaluación de Conductores<br>
@@ -328,20 +344,28 @@
 
         <p><strong>Estimados señores:</strong></p>
 
-        <p>Por medio de la presente, yo, <strong>Neal Ariel Acosta Castro</strong>, cédula de identidad <strong>7-0262-0124</strong>, en mi condición de <strong>patrón</strong> y representante de la empresa <strong>Inversiones Acosta Durán del Caribe S.A.</strong>, personería jurídica <strong>3-101-899284</strong>, hago constar que el(la) señor(a) <strong>${nombreTrabajador}</strong>, cédula de identidad <strong>${cedulaTrabajador}</strong>, vecino(a) de <strong>${direccionTrabajador}</strong>, correo electrónico: <strong>${correoTrabajador}</strong> y teléfono <strong>${telefonoTrabajador}</strong>, labora actualmente para esta empresa desde el día <strong>${fechaInicio}</strong>.</p>
+        <p>Por medio de la presente, yo, <strong>Neal Ariel Acosta Castro</strong>, cédula de identidad <strong>7-0262-0124</strong>,
+        en mi condición de patrón y representante de la empresa <strong>Inversiones Acosta Durán del Caribe S.A.</strong>,
+        personería jurídica <strong>3-101-899284</strong>, hago constar que el(la) señor(a)
+        <strong>${nombreTrabajador}</strong>, cédula de identidad <strong>${cedulaTrabajador}</strong>, vecino(a) de
+        <strong>${direccionTrabajador}</strong>, correo electrónico: <strong>${correoTrabajador}</strong> y teléfono
+        <strong>${telefonoTrabajador}</strong>, labora actualmente para esta empresa desde el día <strong>${fechaInicioLaboral}</strong>.</p>
 
-        <p>Certifico que el(la) señor(a) <strong>${nombreTrabajador}</strong> se desempeña como conductor de <strong>${vehiculo}</strong>${puesto}, realizando labores habituales de transporte de carga para nuestra compañía.</p>
+        <p>Certifico que el(la) señor(a) <strong>${nombreTrabajador}</strong> se desempeña como conductor de
+        <strong>${vehiculo}</strong>${textoPuestoExtra}, realizando labores habituales de transporte de carga
+        para nuestra compañía.</p>
 
-        <p>La presente constancia se emite a solicitud de la parte interesada ${descripcion} ante la Dirección General de Educación Vial del MOPT.</p>
+        <p>La presente constancia se emite a solicitud de la parte interesada ${descripcion}
+        ante la Dirección General de Educación Vial del MOPT.</p>
 
         <p>Para los efectos que estime pertinentes, extiendo la presente en <strong>${lugar}</strong>.</p>
 
         <div class="firma">
 __________________________________  
-Neal Ariel Acosta Castro  
+<strong>Neal Ariel Acosta Castro</strong>  
 Patrón / Representante de  
-Inversiones Acosta Durán del Caribe S.A.  
-Cédula: 7-0262-0124
+<strong>Inversiones Acosta Durán del Caribe S.A.</strong>  
+Cédula: <strong>7-0262-0124</strong>
         </div>
       `;
 
@@ -351,11 +375,11 @@ Cédula: 7-0262-0124
     document.getElementById("btnPDF").addEventListener("click", function () {
       const carta = document.getElementById("cartaContainer");
       const opt = {
-        margin: 0.3,
-        filename: 'Carta_Licencia.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        margin:       0.3,
+        filename:     'Carta_Licencia.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
       };
       html2pdf().set(opt).from(carta).save();
     });
@@ -366,4 +390,5 @@ Cédula: 7-0262-0124
   </script>
 </body>
 </html>
+
 
