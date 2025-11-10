@@ -89,6 +89,14 @@
         </select>
       </div>
     </div>
+<div class="row">
+  <div>
+    <label>Lugar donde se extiende la carta</label>
+    <input id="localidad_carta" type="text"
+           placeholder="Ej.: Guápiles, Pococí, Limón"
+           value="Guápiles, Pococí, Limón">
+  </div>
+</div>
 
     <h3>Datos del trabajador (editables)</h3>
     <div class="row">
@@ -148,13 +156,19 @@
   }
 
   function generar(){
-    // Datos fijos del patrón
-    const decl = 'Neal Ariel Acosta Castro';
-    const cedDecl = '7-0262-0124';
-    const empresa = 'Inversiones Acosta Durán del Caribe S.A.';
-    const pj = '3-101-899284';
-    const telEmpresa = '8977-5801';
-    const localidad = 'Guápiles, Pococí, Limón';
+  // Datos fijos del patrón
+const decl = 'Neal Ariel Acosta Castro';
+const cedDecl = '7-0262-0124';
+const empresa = 'Inversiones Acosta Durán del Caribe S.A.';
+const pj = '3-101-899284';
+const telEmpresa = '8977-5801';
+
+// Localidad donde se extiende la carta (editable, con valor por defecto)
+let localidad = (document.getElementById('localidad_carta').value || '').trim();
+if (!localidad) {
+  localidad = 'Guápiles, Pococí, Limón';
+}
+
 
     // Datos sede
     let sedeLugar = (document.getElementById('sede_lugar').value || '').trim();
@@ -326,6 +340,7 @@
 </script>
 </body>
 </html>
+
 
 
 
