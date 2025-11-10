@@ -1,294 +1,233 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Carta D — Solo datos del trabajador editables</title>
-<style>
-  body{
-    font-family:Arial, sans-serif;
-    padding:18px;
-    max-width:900px;
-    margin:auto;
-    background:#f7f7f7;
-  }
-  h2{margin-top:0}
-  label{display:block; margin-top:12px; font-weight:600;}
-  input[type=text], input[type=email], select{
-    width:100%; padding:8px; box-sizing:border-box; margin-top:6px;
-  }
-  button{margin-top:12px; padding:10px 14px; font-weight:700; cursor:pointer;}
-  .row{display:flex; gap:12px; flex-wrap:wrap}
-  .row > div{flex:1 1 260px}
-  .output{
-    background:#fff;
-    padding:24px;
-    border-radius:8px;
-    margin-top:18px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.06);
-  }
-  .small{font-size:.92em; color:#555;}
-  .fixed{background:#eef5ff; padding:10px; border-radius:6px; margin:10px 0;}
-  .actions{display:flex; gap:10px; flex-wrap:wrap}
-
-  /* SOLO se imprime la carta, no el formulario */
-  @media print {
-    @page {
-      margin: 2.5cm;
+  <meta charset="UTF-8">
+  <title>Generador de Carta - Licencia Tipo D</title>
+  <style>
+    body {
+      font-family: "Times New Roman", serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 20px;
     }
-    body{
-      background:#fff;
-      max-width:none;
-      padding:0;
-      margin:0;
+    .contenedor {
+      max-width: 900px;
+      margin: 0 auto;
     }
-    .no-print{
-      display:none !important;
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
     }
-    #carta{
-      box-shadow:none;
-      margin:0;
-      border-radius:0;
+    .formulario {
+      background: #ffffff;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      font-size: 14px;
     }
-  }
-</style>
-
-<!-- Librería para generar DOCX desde HTML -->
-<script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
+    .form-group {
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+    input, select {
+      width: 100%;
+      padding: 5px 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 8px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #333;
+      background: #fff;
+    }
+    button:hover {
+      background: #f3f3f3;
+    }
+    .carta {
+      background: #ffffff;
+      padding: 40px 50px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.15);
+      line-height: 1.15;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+    .acciones {
+      margin-top: 15px;
+      text-align: right;
+    }
+    @media print {
+      body {
+        background: #ffffff;
+      }
+      .formulario, .acciones, h1 {
+        display: none;
+      }
+      .carta {
+        box-shadow: none;
+        border-radius: 0;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="contenedor">
+    <h1>Generador de carta para licencia tipo D</h1>
 
-  <div class="no-print">
-    <h2>Carta para trámite de licencia tipo D</h2>
-    <p class="small">
-      Los datos del dueño/empresa están fijos. Solo editás los datos del trabajador,
-      la sede regional y el tipo de licencia (D1, D2 o D3).<br>
-      La fecha se coloca automáticamente (si cae fin de semana, se pasa al lunes).
-    </p>
-
-    <div class="fixed">
-      <strong>Dueño/Empresa (fijo):</strong><br>
-      Neal Ariel Acosta Castro — Céd.: 7-0262-0124<br>
-      Inversiones Acosta Durán del Caribe S.A. — Personería: 3-101-899284<br>
-      Tel.: 8977-5801
-    </div>
-
-    <h3>Datos de la sede (editables)</h3>
-    <div class="row">
-      <div>
-        <label>Lugar de la sede regional (solo el lugar)</label>
-        <input id="sede_lugar" type="text" placeholder="Ej.: Guápiles, Limón, San José" value="Guápiles">
+    <div class="formulario">
+      <div class="form-group">
+        <label for="sedeCiudad">Ciudad de la sede regional (ej.: Limón, Guápiles, Alajuela):</label>
+        <input type="text" id="sedeCiudad" value="Limón">
       </div>
-      <div>
-        <label>Tipo de licencia</label>
-        <select id="lic_tipo">
+
+      <div class="form-group">
+        <label for="nombreTrabajador">Nombre completo del trabajador:</label>
+        <input type="text" id="nombreTrabajador" value="Axel Aldair Zúñiga Brown">
+      </div>
+
+      <div class="form-group">
+        <label for="cedulaTrabajador">Cédula del trabajador:</label>
+        <input type="text" id="cedulaTrabajador" value="702800350">
+      </div>
+
+      <div class="form-group">
+        <label for="vecino">Lugar de vecindad (ej.: Guápiles, Pococí, Limón):</label>
+        <input type="text" id="vecino" value="Guápiles, Pococí, Limón">
+      </div>
+
+      <div class="form-group">
+        <label for="correo">Correo electrónico del trabajador:</label>
+        <input type="email" id="correo" value="axelbrown44@gmail.com">
+      </div>
+
+      <div class="form-group">
+        <label for="telefono">Teléfono del trabajador:</label>
+        <input type="text" id="telefono" value="7116-9777">
+      </div>
+
+      <div class="form-group">
+        <label for="tipoLicencia">Tipo de licencia a solicitar:</label>
+        <select id="tipoLicencia">
           <option value="D1">D1</option>
           <option value="D2">D2</option>
           <option value="D3" selected>D3</option>
         </select>
       </div>
+
+      <button type="button" onclick="generarCarta()">Generar carta</button>
     </div>
 
-    <h3>Datos del trabajador (editables)</h3>
-    <div class="row">
-      <div>
-        <label>Nombre completo</label>
-        <input id="interesado" type="text" placeholder="Ej.: Pablo Andrés Valera Vargas" required>
-      </div>
-      <div>
-        <label>Cédula</label>
-        <input id="ced_int" type="text" placeholder="Ej.: 2-0630-0854" required>
-      </div>
-    </div>
-    <div class="row">
-      <div>
-        <label>Dirección / Vecino de</label>
-        <input id="direccion" type="text" placeholder="Ej.: Agua Zarcas, San Carlos, Alajuela">
-      </div>
-      <div>
-        <label>Correo</label>
-        <input id="correo" type="email" placeholder="Ej.: nombre@correo.com">
-      </div>
-      <div>
-        <label>Teléfono</label>
-        <input id="telefono" type="text" placeholder="Ej.: 8584-7803">
-      </div>
-    </div>
+    <div id="carta" class="carta"></div>
 
-    <div class="actions">
-      <button id="btnGenerar" type="button">Generar carta</button>
-      <button id="btnDocx" type="button" disabled>Descargar .docx</button>
-      <button id="btnImprimir" type="button">Imprimir / Guardar PDF</button>
+    <div class="acciones">
+      <button type="button" onclick="window.print()">Imprimir / Guardar como PDF</button>
     </div>
   </div>
 
-  <!-- SOLO la carta generada (esto es lo que se imprime) -->
-  <div id="carta" class="output" style="display:none;"></div>
+  <script>
+    const MESES = [
+      "enero", "febrero", "marzo", "abril", "mayo", "junio",
+      "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    ];
 
-<script>
-'use strict';
-(function(){
-  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-
-  // Ajusta fecha a día laboral (lunes-viernes)
-  function getFechaLaboral(baseDate){
-    const d = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
-    const day = d.getDay(); // 0 = domingo, 6 = sábado
-    if(day === 6){ // sábado
-      d.setDate(d.getDate() + 2);
-    } else if(day === 0){ // domingo
-      d.setDate(d.getDate() + 1);
-    }
-    return d;
-  }
-
-  function fechaEnLetras(d){
-    return d.getDate() + ' de ' + meses[d.getMonth()] + ' de ' + d.getFullYear();
-  }
-
-  function generar(){
-    // Datos fijos
-    const decl = 'Neal Ariel Acosta Castro';
-    const cedDecl = '7-0262-0124';
-    const empresa = 'Inversiones Acosta Durán del Caribe S.A.';
-    const pj = '3-101-899284';
-    const telEmpresa = '8977-5801';
-    const localidad = 'Guápiles, Pococí, Limón';
-
-    // Datos sede
-    let sedeLugar = (document.getElementById('sede_lugar').value || '').trim();
-    if (!sedeLugar) sedeLugar = 'Guápiles';
-
-    let tipoLic = (document.getElementById('lic_tipo').value || '').trim();
-    if (!tipoLic) tipoLic = 'D3';
-
-    // Datos trabajador
-    const interesado = (document.getElementById('interesado').value || '').trim();
-    const cedInt = (document.getElementById('ced_int').value || '').trim();
-    const direccion = (document.getElementById('direccion').value || '').trim();
-    const correo = (document.getElementById('correo').value || '').trim();
-    const telefono = (document.getElementById('telefono').value || '').trim();
-
-    if(!interesado || !cedInt){
-      alert('Completá al menos: Nombre y Cédula del trabajador.');
-      return;
+    function formatearFecha(fecha) {
+      const dia = fecha.getDate();
+      const mes = MESES[fecha.getMonth()];
+      const anio = fecha.getFullYear();
+      return `${dia} de ${mes} de ${anio}`;
     }
 
-    const hoy = new Date();
-    const fechaLab = getFechaLaboral(hoy);
-    const fechaTxt = fechaEnLetras(fechaLab);
+    // Ajusta la fecha de la carta para que siempre sea de lunes a viernes
+    function ajustarFechaHabil(fecha) {
+      const f = new Date(fecha.getTime());
+      const diaSemana = f.getDay(); // 0=Dom, 6=Sab
 
-    // Espaciado tipo Word: interlineado 1.15, margencito abajo
-    const pStyle = "margin:0 0 6px; line-height:1.15; text-align:justify;";
-
-    // Carta para mostrar/imprimir
-    const cartaHTML = `
-      <div style="text-align:right; margin-bottom:14px; line-height:1.15;">${fechaTxt}</div>
-
-      <p style="${pStyle}"><strong>Señores:</strong><br>
-      Sede Regional de Educación Vial ${sedeLugar}<br>
-      Departamento de Evaluación de Conductores<br>
-      Dirección General de Educación Vial<br>
-      Ministerio de Obras Públicas y Transportes (MOPT)</p>
-
-      <p style="${pStyle}">Estimados señores:</p>
-
-      <p style="${pStyle}">Por medio de la presente, yo, <strong>${decl}</strong>, cédula de identidad <strong>${cedDecl}</strong>, en mi condición de propietario de la empresa <strong>${empresa}</strong>, personería jurídica <strong>${pj}</strong>, hago constar que el(la) señor(a) <strong>${interesado}</strong>, cédula de identidad <strong>${cedInt}</strong>${direccion?`, vecino(a) de ${direccion}`:''}${correo?`, correo electrónico: <strong>${correo}</strong>`:''}${telefono?` y teléfono <strong>${telefono}</strong>`:''}, labora actualmente para esta empresa.</p>
-
-      <p style="${pStyle}">Certifico que el(la) señor(a) <strong>${interesado}</strong> opera montacargas y cuenta con amplia experiencia en la manipulación y operación de dicha maquinaria, desempeñándose de manera responsable y competente en sus funciones.</p>
-
-      <p style="${pStyle}">Por lo anterior, solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la <strong>licencia tipo ${tipoLic}</strong>.</p>
-
-      <p style="${pStyle}">Agradezco de antemano la atención prestada a esta solicitud.</p>
-
-      <p style="${pStyle}">Se extiende la presente en ${localidad}, a los ${fechaLab.getDate()} del mes de ${meses[fechaLab.getMonth()]} del año ${fechaLab.getFullYear()}.</p>
-
-      <p style="${pStyle}">Atentamente,</p>
-
-      <p style="margin:30px 0 0; line-height:1.15; text-align:left;">
-      _______________________________<br>
-      ${decl}<br>
-      Cédula: ${cedDecl}<br>
-      Propietario<br>
-      ${empresa}<br>
-      Tel.: ${telEmpresa}</p>
-    `;
-
-    // Versión para DOCX (sin estilos CSS, solo párrafos limpios)
-    window._ultimaCartaDocxHTML = `
-      <p>${fechaTxt}</p>
-
-      <p>Señores:<br>
-      Sede Regional de Educación Vial ${sedeLugar}<br>
-      Departamento de Evaluación de Conductores<br>
-      Dirección General de Educación Vial<br>
-      Ministerio de Obras Públicas y Transportes (MOPT)</p>
-
-      <p>Estimados señores:</p>
-
-      <p>Por medio de la presente, yo, ${decl}, cédula de identidad ${cedDecl}, en mi condición de propietario de la empresa ${empresa}, personería jurídica ${pj}, hago constar que el(la) señor(a) ${interesado}, cédula de identidad ${cedInt}${direccion?`, vecino(a) de ${direccion}`:''}${correo?`, correo electrónico: ${correo}`:''}${telefono?` y teléfono ${telefono}`:''}, labora actualmente para esta empresa.</p>
-
-      <p>Certifico que el(la) señor(a) ${interesado} opera montacargas y cuenta con amplia experiencia en la manipulación y operación de dicha maquinaria, desempeñándose de manera responsable y competente en sus funciones.</p>
-
-      <p>Por lo anterior, solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la licencia tipo ${tipoLic}.</p>
-
-      <p>Agradezco de antemano la atención prestada a esta solicitud.</p>
-
-      <p>Se extiende la presente en ${localidad}, a los ${fechaLab.getDate()} del mes de ${meses[fechaLab.getMonth()]} del año ${fechaLab.getFullYear()}.</p>
-
-      <p>Atentamente,</p>
-
-      <p>
-      _______________________________<br>
-      ${decl}<br>
-      Cédula: ${cedDecl}<br>
-      Propietario<br>
-      ${empresa}<br>
-      Tel.: ${telEmpresa}</p>
-    `;
-
-    const cont = document.getElementById('carta');
-    cont.innerHTML = cartaHTML;
-    cont.style.display = 'block';
-    document.getElementById('btnDocx').disabled = false;
-  }
-
-  function descargarDocx(){
-    const cont = document.getElementById('carta');
-    if(!cont || cont.style.display === 'none'){
-      alert('Primero generá la carta.');
-      return;
+      if (diaSemana === 0) {        // Domingo
+        f.setDate(f.getDate() - 2); // Viernes
+      } else if (diaSemana === 6) { // Sábado
+        f.setDate(f.getDate() - 1); // Viernes
+      }
+      return f;
     }
 
-    const inner = window._ultimaCartaDocxHTML || cont.innerHTML;
-
-    const html = "<!DOCTYPE html><html><head><meta charset='utf-8'></head><body>" +
-                 inner +
-                 "</body></html>";
-
-    const blob = window.htmlDocx.asBlob(html);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'carta_licencia_D.docx';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 800);
-  }
-
-  function imprimir(){
-    const cont = document.getElementById('carta');
-    if(!cont || cont.style.display === 'none'){
-      alert('Primero generá la carta.');
-      return;
+    // Genera la fecha de inicio de labores:
+    // 1 mes antes de la fecha actual, restando entre 3 y 5 días
+    function generarFechaInicioTrabajo(fechaBase) {
+      const f = new Date(fechaBase.getTime());
+      // un mes antes
+      f.setMonth(f.getMonth() - 1);
+      // restar entre 3 y 5 días aleatorio
+      const diasExtra = 3 + Math.floor(Math.random() * 3); // 3, 4 o 5
+      f.setDate(f.getDate() - diasExtra);
+      return f;
     }
-    window.print();
-  }
 
-  document.getElementById('btnGenerar').addEventListener('click', generar);
-  document.getElementById('btnDocx').addEventListener('click', descargarDocx);
-  document.getElementById('btnImprimir').addEventListener('click', imprimir);
-})();
-</script>
+    function generarCarta() {
+      const sedeCiudad = document.getElementById("sedeCiudad").value.trim() || "Guápiles";
+      const nombreTrabajador = document.getElementById("nombreTrabajador").value.trim() || "Nombre del trabajador";
+      const cedulaTrabajador = document.getElementById("cedulaTrabajador").value.trim() || "0-0000-0000";
+      const vecino = document.getElementById("vecino").value.trim() || "Guápiles, Pococí, Limón";
+      const correo = document.getElementById("correo").value.trim() || "correo@ejemplo.com";
+      const telefono = document.getElementById("telefono").value.trim() || "0000-0000";
+      const tipoLicencia = document.getElementById("tipoLicencia").value;
+
+      // Fecha de hoy (ajustada a día hábil)
+      const hoyReal = new Date();
+      const fechaCarta = ajustarFechaHabil(hoyReal);
+
+      // Fecha de inicio de labores (un mes antes con 3–5 días menos)
+      const fechaInicio = generarFechaInicioTrabajo(hoyReal);
+
+      const fechaCartaLinea = formatearFecha(fechaCarta);
+      const fechaInicioTexto = formatearFecha(fechaInicio);
+
+      const sedeLinea = `Sede Regional de Educación Vial ${sedeCiudad}`;
+
+      const htmlCarta = `
+<b>${fechaCartaLinea}</b><br><br>
+
+<b>Señores:</b><br>
+<b>${sedeLinea}</b><br>
+<b>Departamento de Evaluación de Conductores</b><br>
+<b>Dirección General de Educación Vial</b><br>
+<b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
+
+<b>Estimados señores:</b><br><br>
+
+Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>patrón</b> de la empresa <b>Inversiones Acosta Durán del Caribe S.A.</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombreTrabajador}</b>, cédula de identidad <b>${cedulaTrabajador}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, labora actualmente para esta empresa desde el día <b>${fechaInicioTexto}</b>.<br><br>
+
+Certifico que el señor <b>${nombreTrabajador}</b> <b>opera montacargas</b> y cuenta con amplia experiencia en la manipulación y operación de dicha maquinaria, desempeñándose de manera <b>responsable, segura y competente</b> en sus funciones.<br><br>
+
+Por lo anterior, <b>solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la licencia tipo ${tipoLicencia}.</b><br><br>
+
+Agradezco de antemano la atención prestada a esta solicitud.<br><br>
+
+Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${fechaCarta.getDate()}</b> días del mes de <b>${MESES[fechaCarta.getMonth()]}</b> del año <b>${fechaCarta.getFullYear()}</b>.<br><br>
+
+Atentamente,<br><br><br>
+___________________________<br>
+<b>Neal Ariel Acosta Castro</b><br>
+Cédula: <b>7-0262-0124</b><br>
+<b>Patrón</b><br>
+<b>Inversiones Acosta Durán del Caribe S.A.</b><br>
+Tel.: <b>8977-5801</b>
+      `;
+
+      document.getElementById("carta").innerHTML = htmlCarta;
+    }
+
+    // Generar una carta de ejemplo al cargar
+    window.addEventListener("DOMContentLoaded", generarCarta);
+  </script>
 </body>
 </html>
+
+
