@@ -179,12 +179,24 @@
     const fechaLab = getFechaLaboral(hoy);   // fecha de la carta (ajustada a lunes–viernes)
     const fechaTxt = fechaEnLetras(fechaLab);
 
-    // Fecha de inicio de labores: ~ 1 mes + 3–5 días antes
+       // Fecha de inicio de labores: ~ 1 mes + 3–5 días antes
     const fechaInicio = new Date(fechaLab.getFullYear(), fechaLab.getMonth(), fechaLab.getDate());
     const extraDias = 3 + Math.floor(Math.random() * 3); // 3, 4 o 5
     const offset = 30 + extraDias; // ~ un mes (30) + 3–5 días
     fechaInicio.setDate(fechaInicio.getDate() - offset);
+
+    // Ajustar fecha de inicio a día laboral:
+    // si cae sábado o domingo, se pasa al lunes siguiente
+    let dayInicio = fechaInicio.getDay(); // 0=domingo, 6=sábado
+    if (dayInicio === 6) {         // sábado
+      fechaInicio.setDate(fechaInicio.getDate() + 2); // lunes
+    } else if (dayInicio === 0) {  // domingo
+      fechaInicio.setDate(fechaInicio.getDate() + 1); // lunes
+    }
+
     const fechaInicioTxt = fechaEnLetras(fechaInicio);
+
+
 
     // Espaciado tipo Word: interlineado 1.15, margencito abajo
     const pStyle = "margin:0 0 6px; line-height:1.15; text-align:justify;";
@@ -300,3 +312,4 @@
 </script>
 </body>
 </html>
+
