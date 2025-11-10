@@ -96,12 +96,12 @@
     }
 
     .carta {
-      font-size: 12px;
-      line-height: 1.18; /* más cerradito para que quepa en una página */
+      font-size: 11px;        /* un poco más pequeña para que quepa */
+      line-height: 1.5;       /* interlineado 1.5 como pedís */
     }
 
     .carta p {
-      margin: 2px 0;
+      margin: 4px 0;          /* un poquito más de espacio entre párrafos */
       text-align: justify;
     }
 
@@ -109,7 +109,7 @@
       margin-top: 30px;
       text-align: left;
       white-space: pre-line;
-      font-size: 12px;
+      font-size: 11px;
     }
 
     @media print {
@@ -128,7 +128,14 @@
       .carta-contenedor {
         box-shadow: none;
         margin: 0;
-        padding: 20mm;
+        padding: 18mm 18mm 18mm 18mm; /* márgenes parejos para llenar bien la página */
+      }
+      .carta {
+        font-size: 11px;
+        line-height: 1.5;
+      }
+      .carta p {
+        margin: 3px 0;
       }
     }
   </style>
