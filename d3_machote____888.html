@@ -179,36 +179,34 @@
     const fechaLab = getFechaLaboral(hoy);   // fecha de la carta (ajustada a lunes–viernes)
     const fechaTxt = fechaEnLetras(fechaLab);
 
-           // Fecha de inicio de labores: ~ 1 mes + 3–5 días antes
+            // Fecha de inicio de labores: entre 1 mes y 15 días antes (~30 a 45 días)
     const fechaInicio = new Date(fechaLab.getFullYear(), fechaLab.getMonth(), fechaLab.getDate());
-    const extraDias = 3 + Math.floor(Math.random() * 3); // 3, 4 o 5
-    const offset = 30 + extraDias; // ~ un mes (30) + 3–5 días
+    const offset = 30 + Math.floor(Math.random() * 16); // 30 a 45 días atrás
     fechaInicio.setDate(fechaInicio.getDate() - offset);
 
-    // Ajustar fecha de inicio a día laboral de forma "natural":
-    // - Si ya cae lunes a viernes, se deja así.
-    // - Si cae sábado o domingo, a veces se va al viernes anterior y a veces al lunes siguiente.
+    // Ajustar fecha de inicio a día laboral de forma natural:
+    // - Si ya es lunes a viernes, se deja así.
+    // - Si cae sábado o domingo, a veces pasa a viernes anterior o lunes siguiente.
     let dayInicio = fechaInicio.getDay(); // 0=domingo, 6=sábado
-
-    if (dayInicio === 6) {         // sábado
+    if (dayInicio === 6) { // sábado
       if (Math.random() < 0.5) {
-        // viernes anterior
-        fechaInicio.setDate(fechaInicio.getDate() - 1);
+        fechaInicio.setDate(fechaInicio.getDate() - 1); // viernes
       } else {
-        // lunes siguiente
-        fechaInicio.setDate(fechaInicio.getDate() + 2);
+        fechaInicio.setDate(fechaInicio.getDate() + 2); // lunes
       }
-    } else if (dayInicio === 0) {  // domingo
+    } else if (dayInicio === 0) { // domingo
       if (Math.random() < 0.5) {
-        // viernes anterior
-        fechaInicio.setDate(fechaInicio.getDate() - 2);
+        fechaInicio.setDate(fechaInicio.getDate() - 2); // viernes
       } else {
-        // lunes siguiente
-        fechaInicio.setDate(fechaInicio.getDate() + 1);
+        fechaInicio.setDate(fechaInicio.getDate() + 1); // lunes
       }
     }
 
-    const fechaInicioTxt = fechaEnLetras(fechaInicio);
+    // Día de la semana en texto
+    const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+    const diaSemanaTxt = diasSemana[fechaInicio.getDay()];
+    const fechaInicioTxt = `${diaSemanaTxt} ${fechaInicio.getDate()} de ${meses[fechaInicio.getMonth()]} de ${fechaInicio.getFullYear()}`;
+
 
 
 
@@ -328,6 +326,7 @@
 </script>
 </body>
 </html>
+
 
 
 
