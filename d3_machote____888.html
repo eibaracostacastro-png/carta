@@ -2,114 +2,79 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Carta para licencia D1 / D2 / D3</title>
+  <title>Generador de Carta - Licencia Tipo D</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f3f3f3;
+      font-family: "Times New Roman", serif;
+      background: #f2f2f2;
       margin: 0;
       padding: 20px;
     }
-
     .contenedor {
       max-width: 900px;
       margin: 0 auto;
     }
-
     h1 {
       text-align: center;
       margin-bottom: 10px;
     }
-
     .formulario {
       background: #ffffff;
       padding: 15px 20px;
       border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-      font-size: 13px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+      font-size: 14px;
     }
-
-    .form-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+    .form-group {
       margin-bottom: 8px;
     }
-
-    .form-row > div {
-      flex: 1;
-      min-width: 180px;
-    }
-
     label {
       display: block;
       font-weight: bold;
-      margin-bottom: 2px;
-      font-size: 11px;
+      margin-bottom: 3px;
     }
-
     input, select {
       width: 100%;
-      padding: 3px 5px;
+      padding: 5px 8px;
+      font-size: 14px;
       box-sizing: border-box;
-      font-size: 12px;
     }
-
-    input[readonly] {
-      background-color: #f7f7f7;
-    }
-
     button {
-      margin-top: 8px;
-      padding: 7px 12px;
-      font-size: 13px;
-      border-radius: 4px;
-      border: none;
+      padding: 8px 15px;
+      font-size: 14px;
       cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #333;
+      background: #fff;
     }
-
-    #btnGenerar {
-      background: #007bff;
-      color: #fff;
+    button:hover {
+      background: #f3f3f3;
     }
-
-    #btnImprimir {
-      background: #28a745;
-      color: #fff;
-      margin-left: 6px;
+    .carta-wrapper {
+      display: flex;
+      justify-content: center;
     }
-
-    #btnPDF {
-      background: #dc3545;
-      color: #fff;
-      margin-left: 6px;
-    }
-
-    .carta-contenedor {
-      background: #ffffff;
-      padding: 20px 25px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      min-height: 500px;
-      margin-top: 10px;
-    }
-
     .carta {
-      font-size: 11px;        /* un poco más pequeña para que quepa */
-      line-height: 1.5;       /* interlineado 1.5 como pedís */
+      background: #ffffff;
+      padding: 35px 50px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.15);
+      line-height: 1.15;
+      font-size: 14px;
+      white-space: pre-wrap;
+      width: 100%;
+      max-width: 700px; /* parecido a hoja A4 */
+    }
+    .acciones {
+      margin-top: 10px;
+      text-align: right;
     }
 
-    .carta p {
-      margin: 4px 0;          /* un poquito más de espacio entre párrafos */
-      text-align: justify;
-    }
-
-    .firma {
-      margin-top: 30px;
-      text-align: left;
-      white-space: pre-line;
-      font-size: 11px;
+    /* Configuración especial para impresión */
+    @page {
+      size: A4;
+      margin: 2cm;
     }
 
     @media print {
@@ -118,282 +83,152 @@
         margin: 0;
         padding: 0;
       }
-      .formulario, #btnImprimir, #btnGenerar, #btnPDF, h1 {
-        display: none !important;
+      .formulario, .acciones, h1 {
+        display: none;
       }
       .contenedor {
-        max-width: 100%;
         margin: 0;
+        padding: 0;
+        max-width: none;
       }
-      .carta-contenedor {
-        box-shadow: none;
+      .carta-wrapper {
         margin: 0;
-        padding: 18mm 18mm 18mm 18mm; /* márgenes parejos para llenar bien la página */
+        padding: 0;
       }
       .carta {
-        font-size: 11px;
-        line-height: 1.5;
-      }
-      .carta p {
-        margin: 3px 0;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+        max-width: none;
       }
     }
   </style>
 </head>
 <body>
   <div class="contenedor">
-    <h1>Carta para Solicitud de Licencia D1 / D2 / D3</h1>
+    <h1>Generador de carta para licencia tipo D</h1>
 
     <div class="formulario">
-      <div class="form-row">
-        <div>
-          <label for="lugar">Lugar donde se emite</label>
-          <input type="text" id="lugar" value="Guápiles, Pococí, Limón">
-        </div>
-        <div>
-          <label for="sedeRegional">Sede Regional de Educación Vial</label>
-          <input type="text" id="sedeRegional" value="Guápiles">
-        </div>
-        <div>
-          <label for="licenseType">Tipo de licencia</label>
-          <select id="licenseType">
-            <option value="D1">D1 - Liviano de carga</option>
-            <option value="D2">D2 - Pesado de carga</option>
-            <option value="D3">D3 - Articulado / equipo especial</option>
-          </select>
-        </div>
+      <div class="form-group">
+        <label for="sedeCiudad">Ciudad de la sede regional:</label>
+        <input type="text" id="sedeCiudad" placeholder="Ej.: Limón, Guápiles, Alajuela">
       </div>
 
-      <hr>
-
-      <h3>Datos del patrón / empresa (fijos)</h3>
-      <div class="form-row">
-        <div>
-          <label>Nombre del patrón</label>
-          <input type="text" value="Neal Ariel Acosta Castro" readonly>
-        </div>
-        <div>
-          <label>Cédula del patrón</label>
-          <input type="text" value="7-0262-0124" readonly>
-        </div>
+      <div class="form-group">
+        <label for="nombreTrabajador">Nombre completo del trabajador:</label>
+        <input type="text" id="nombreTrabajador" placeholder="Nombre del trabajador">
       </div>
 
-      <div class="form-row">
-        <div>
-          <label>Nombre de la empresa</label>
-          <input type="text" value="Inversiones Acosta Durán del Caribe S.A." readonly>
-        </div>
-        <div>
-          <label>Personería jurídica</label>
-          <input type="text" value="3-101-899284" readonly>
-        </div>
+      <div class="form-group">
+        <label for="cedulaTrabajador">Cédula del trabajador:</label>
+        <input type="text" id="cedulaTrabajador" placeholder="0-0000-0000">
       </div>
 
-      <hr>
-
-      <h3>Datos del trabajador</h3>
-      <div class="form-row">
-        <div>
-          <label for="nombreTrabajador">Nombre del trabajador</label>
-          <input type="text" id="nombreTrabajador" placeholder="">
-        </div>
-        <div>
-          <label for="cedulaTrabajador">Cédula del trabajador</label>
-          <input type="text" id="cedulaTrabajador" placeholder="">
-        </div>
+      <div class="form-group">
+        <label for="vecino">Lugar de vecindad:</label>
+        <input type="text" id="vecino" placeholder="Ej.: Guápiles, Pococí, Limón">
       </div>
 
-      <div class="form-row">
-        <div>
-          <label for="direccionTrabajador">Vecino de</label>
-          <input type="text" id="direccionTrabajador" placeholder="">
-        </div>
-        <div>
-          <label for="correoTrabajador">Correo electrónico</label>
-          <input type="email" id="correoTrabajador" placeholder="">
-        </div>
-        <div>
-          <label for="telefonoTrabajador">Teléfono</label>
-          <input type="text" id="telefonoTrabajador" placeholder="">
-        </div>
+      <div class="form-group">
+        <label for="correo">Correo electrónico del trabajador:</label>
+        <input type="email" id="correo" placeholder="correo@ejemplo.com">
       </div>
 
-      <div class="form-row">
-        <div>
-          <label for="puestoExtra">Puesto específico (opcional)</label>
-          <input type="text" id="puestoExtra" placeholder="Ej.: Operador de montacargas">
-        </div>
+      <div class="form-group">
+        <label for="telefono">Teléfono del trabajador:</label>
+        <input type="text" id="telefono" placeholder="0000-0000">
       </div>
 
-      <hr>
-
-      <h3>Opciones de fecha de inicio laboral</h3>
-      <div class="form-row">
-        <div>
-          <label for="modoFecha">Modo de fecha</label>
-          <select id="modoFecha">
-            <option value="auto">Automática (entre 1 mes y 1 mes + 15 días)</option>
-            <option value="manual">Manual (seleccione la fecha)</option>
-          </select>
-        </div>
-        <div>
-          <label for="fechaInicioManual">Fecha de inicio (si es manual)</label>
-          <input type="date" id="fechaInicioManual">
-        </div>
+      <div class="form-group">
+        <label for="tipoLicencia">Tipo de licencia a solicitar:</label>
+        <select id="tipoLicencia">
+          <option value="D1">D1</option>
+          <option value="D2">D2</option>
+          <option value="D3" selected>D3</option>
+        </select>
       </div>
 
-      <button id="btnGenerar">Generar carta</button>
-      <button id="btnImprimir" onclick="window.print()">Imprimir</button>
-      <button id="btnPDF">Descargar PDF</button>
+      <button type="button" onclick="generarCarta()">Generar carta</button>
     </div>
 
-    <div class="carta-contenedor" id="cartaContainer">
-      <div id="carta" class="carta" contenteditable="true"></div>
+    <div class="carta-wrapper">
+      <div id="carta" class="carta"></div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" onclick="window.print()">Imprimir / Guardar como PDF</button>
     </div>
   </div>
 
-  <!-- Librería para generar PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
   <script>
-    function formatearFechaEspCompleta(fecha) {
-      const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
-      const meses = [
-        "enero", "febrero", "marzo", "abril", "mayo", "junio",
-        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
-      ];
-      const diaSemana = dias[fecha.getDay()];
+    const MESES = [
+      "enero", "febrero", "marzo", "abril", "mayo", "junio",
+      "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    ];
+
+    function formatearFecha(fecha) {
       const dia = fecha.getDate();
-      const mes = meses[fecha.getMonth()];
+      const mes = MESES[fecha.getMonth()];
       const anio = fecha.getFullYear();
-      return `${diaSemana} ${dia} de ${mes} del ${anio}`;
+      return `${dia} de ${mes} de ${anio}`;
     }
 
-    function formatearFechaDesdeInput(valor) {
-      if (!valor) return "";
-      const partes = valor.split("-");
-      if (partes.length !== 3) return "";
-      const anio = parseInt(partes[0], 10);
-      const mes = parseInt(partes[1], 10) - 1;
-      const dia = parseInt(partes[2], 10);
-      const fecha = new Date(anio, mes, dia);
-      return formatearFechaEspCompleta(fecha);
+    function ajustarFechaHabil(fecha) {
+      const f = new Date(fecha);
+      const d = f.getDay(); // 0 dom, 6 sáb
+      if (d === 6) f.setDate(f.getDate() - 1);
+      if (d === 0) f.setDate(f.getDate() - 2);
+      return f;
     }
 
-    // Fecha automática "natural": entre 30 y 45 días hacia atrás
-    function calcularFechaInicioLaboralAuto() {
-      const hoy = new Date();
-      const diasMin = 30;
-      const diasMax = 45;
-      const diasARestar = diasMin + Math.floor(Math.random() * (diasMax - diasMin + 1));
-      const msDias = diasARestar * 24 * 60 * 60 * 1000;
-      const inicio = new Date(hoy.getTime() - msDias);
-      return formatearFechaEspCompleta(inicio);
+    function generarFechaInicioTrabajo(base) {
+      const f = new Date(base);
+      f.setMonth(f.getMonth() - 1);
+      const diasExtra = 3 + Math.floor(Math.random() * 3); // 3,4,5
+      f.setDate(f.getDate() - diasExtra);
+      return f;
     }
 
-    function formatearFechaHoy() {
-      const hoy = new Date();
-      return formatearFechaEspCompleta(hoy);
+    function generarCarta() {
+      const sedeCiudad = document.getElementById("sedeCiudad").value.trim() || "____________";
+      const nombreTrabajador = document.getElementById("nombreTrabajador").value.trim() || "_____________________________";
+      const cedulaTrabajador = document.getElementById("cedulaTrabajador").value.trim() || "___________";
+      const vecino = document.getElementById("vecino").value.trim() || "_______________________";
+      const correo = document.getElementById("correo").value.trim() || "_______________________";
+      const telefono = document.getElementById("telefono").value.trim() || "___________";
+      const tipoLicencia = document.getElementById("tipoLicencia").value;
+
+      const hoy = ajustarFechaHabil(new Date());
+      const fechaInicio = generarFechaInicioTrabajo(hoy);
+
+      const fechaCartaLinea = formatearFecha(hoy);
+      const fechaInicioTexto = formatearFecha(fechaInicio);
+      const sedeLinea = `Sede Regional de Educación Vial ${sedeCiudad}`;
+
+      document.getElementById("carta").innerHTML = `
+<b>${fechaCartaLinea}</b><br><br>
+<b>Señores:</b><br>
+<b>${sedeLinea}</b><br>
+<b>Departamento de Evaluación de Conductores</b><br>
+<b>Dirección General de Educación Vial</b><br>
+<b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
+
+<b>Estimados señores:</b><br>
+Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>patrón</b> de la empresa <b>Inversiones Acosta Durán del Caribe S.A.</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombreTrabajador}</b>, cédula de identidad <b>${cedulaTrabajador}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, labora actualmente para esta empresa desde el día <b>${fechaInicioTexto}</b>.<br>
+Certifico que el señor <b>${nombreTrabajador}</b> <b>opera montacargas</b> y cuenta con amplia experiencia en la manipulación y operación de dicha maquinaria, desempeñándose de manera <b>responsable, segura y competente</b> en sus funciones.<br>
+Por lo anterior, <b>solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la licencia tipo ${tipoLicencia}.</b><br>
+Agradezco de antemano la atención prestada a esta solicitud.<br>
+Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
+Atentamente,<br><br>
+___________________________<br>
+<b>Neal Ariel Acosta Castro</b><br>
+Cédula: <b>7-0262-0124</b><br>
+<b>Patrón</b><br>
+<b>Inversiones Acosta Durán del Caribe S.A.</b><br>
+Tel.: <b>8977-5801</b>`;
     }
 
-    function obtenerTextosPorLicencia(tipo) {
-      const textos = {
-        D1: {
-          vehiculo: "vehículos livianos de carga con peso bruto entre 3 y 8 toneladas",
-          descripcion: "para los trámites de obtención de la licencia de conducir categoría D1"
-        },
-        D2: {
-          vehiculo: "vehículos pesados de carga con peso bruto superior a 8 toneladas",
-          descripcion: "para los trámites de obtención de la licencia de conducir categoría D2"
-        },
-        D3: {
-          vehiculo: "vehículos articulados de carga y equipo especial pesado",
-          descripcion: "para los trámites de obtención de la licencia de conducir categoría D3"
-        }
-      };
-      return textos[tipo];
-    }
-
-    document.getElementById("btnGenerar").addEventListener("click", function () {
-      const lugar = document.getElementById("lugar").value || "Guápiles, Pococí, Limón";
-      const sedeRegional = document.getElementById("sedeRegional").value || "Guápiles";
-      const licenseType = document.getElementById("licenseType").value;
-
-      const nombreTrabajador = document.getElementById("nombreTrabajador").value || "[Nombre del trabajador]";
-      const cedulaTrabajador = document.getElementById("cedulaTrabajador").value || "[Cédula del trabajador]";
-      const direccionTrabajador = document.getElementById("direccionTrabajador").value || "[Dirección del trabajador]";
-      const correoTrabajador = document.getElementById("correoTrabajador").value || "[Correo del trabajador]";
-      const telefonoTrabajador = document.getElementById("telefonoTrabajador").value || "[Teléfono del trabajador]";
-      const puestoExtra = document.getElementById("puestoExtra").value;
-
-      const fechaHoy = formatearFechaHoy();
-      const modoFecha = document.getElementById("modoFecha").value;
-      const fechaManualValor = document.getElementById("fechaInicioManual").value;
-
-      let fechaInicioLaboral = "";
-      if (modoFecha === "manual" && fechaManualValor) {
-        fechaInicioLaboral = formatearFechaDesdeInput(fechaManualValor);
-      } else {
-        fechaInicioLaboral = calcularFechaInicioLaboralAuto();
-      }
-
-      const { vehiculo, descripcion } = obtenerTextosPorLicencia(licenseType);
-      const textoPuestoExtra = puestoExtra ? `, desempeñando el puesto de <strong>${puestoExtra}</strong>` : "";
-
-      const cartaHTML = `
-        <p style="text-align:right;"><strong>${lugar}, ${fechaHoy}</strong></p>
-
-        <p><strong>Señores:</strong><br>
-        <strong>Sede Regional de Educación Vial ${sedeRegional}</strong><br>
-        Departamento de Evaluación de Conductores<br>
-        Dirección General de Educación Vial<br>
-        Ministerio de Obras Públicas y Transportes (MOPT)</p>
-
-        <p><strong>Estimados señores:</strong></p>
-
-        <p>Por medio de la presente, yo, <strong>Neal Ariel Acosta Castro</strong>, cédula de identidad <strong>7-0262-0124</strong>,
-        en mi condición de patrón y representante de la empresa <strong>Inversiones Acosta Durán del Caribe S.A.</strong>,
-        personería jurídica <strong>3-101-899284</strong>, hago constar que el(la) señor(a)
-        <strong>${nombreTrabajador}</strong>, cédula de identidad <strong>${cedulaTrabajador}</strong>, vecino(a) de
-        <strong>${direccionTrabajador}</strong>, correo electrónico: <strong>${correoTrabajador}</strong> y teléfono
-        <strong>${telefonoTrabajador}</strong>, labora actualmente para esta empresa desde el día <strong>${fechaInicioLaboral}</strong>.</p>
-
-        <p>Certifico que el(la) señor(a) <strong>${nombreTrabajador}</strong> se desempeña como conductor de
-        <strong>${vehiculo}</strong>${textoPuestoExtra}, realizando labores habituales de transporte de carga
-        para nuestra compañía.</p>
-
-        <p>La presente constancia se emite a solicitud de la parte interesada ${descripcion}
-        ante la Dirección General de Educación Vial del MOPT.</p>
-
-        <p>Para los efectos que estime pertinentes, extiendo la presente en <strong>${lugar}</strong>.</p>
-
-        <div class="firma">
-__________________________________  
-<strong>Neal Ariel Acosta Castro</strong>  
-Patrón / Representante de  
-<strong>Inversiones Acosta Durán del Caribe S.A.</strong>  
-Cédula: <strong>7-0262-0124</strong>
-        </div>
-      `;
-
-      document.getElementById("carta").innerHTML = cartaHTML;
-    });
-
-    document.getElementById("btnPDF").addEventListener("click", function () {
-      const carta = document.getElementById("cartaContainer");
-      const opt = {
-        margin:       0.3,
-        filename:     'Carta_Licencia.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(carta).save();
-    });
-
-    window.addEventListener("load", () => {
-      document.getElementById("btnGenerar").click();
-    });
+    window.addEventListener("DOMContentLoaded", generarCarta);
   </script>
 </body>
 </html>
