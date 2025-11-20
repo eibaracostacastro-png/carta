@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Generador de Carta - Licencia Tipo D</title>
+  <title>Generador de Carta - Licencias D1, D2, D3</title>
   <style>
     body {
       font-family: "Times New Roman", serif;
@@ -65,14 +65,13 @@
       font-size: 14px;
       white-space: pre-wrap;
       width: 100%;
-      max-width: 700px; /* parecido a hoja A4 */
+      max-width: 700px;
     }
     .acciones {
       margin-top: 10px;
       text-align: right;
     }
 
-    /* Configuración especial para impresión */
     @page {
       size: A4;
       margin: 2cm;
@@ -92,14 +91,11 @@
         padding: 0;
         max-width: none;
       }
-      .carta-wrapper {
+      .carta-wrapper, .carta {
         margin: 0;
         padding: 0;
-      }
-      .carta {
         box-shadow: none;
         border-radius: 0;
-        padding: 0;
         max-width: none;
       }
     }
@@ -135,7 +131,7 @@
         <input type="email" id="correo" placeholder="correo@ejemplo.com">
       </div>
 
-      <div className="form-group">
+      <div class="form-group">
         <label for="telefono">Teléfono del participante:</label>
         <input type="text" id="telefono" placeholder="0000-0000">
       </div>
@@ -163,66 +159,45 @@
   </div>
 
   <script>
-    const MESES = [
-      "enero", "febrero", "marzo", "abril", "mayo", "junio",
-      "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
-    ];
-
-    const DIAS = [
-      "domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"
-    ];
+    const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+    const DIAS = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
 
     function formatearFecha(fecha) {
-      const dia = fecha.getDate();
-      const mes = MESES[fecha.getMonth()];
-      const anio = fecha.getFullYear();
-      return `${dia} de ${mes} de ${anio}`;
+      return `${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
     }
 
     function formatearFechaConDia(fecha) {
-      const nombreDia = DIAS[fecha.getDay()];
-      const dia = fecha.getDate();
-      const mes = MESES[fecha.getMonth()];
-      const anio = fecha.getFullYear();
-      return `${nombreDia} ${dia} de ${mes} del ${anio}`;
+      return `${DIAS[fecha.getDay()]} ${fecha.getDate()} de ${MESES[fecha.getMonth()]} del ${fecha.getFullYear()}`;
     }
 
     function ajustarFechaHabil(fecha) {
       const f = new Date(fecha);
-      const d = f.getDay(); // 0 dom, 6 sáb
-      if (d === 6) f.setDate(f.getDate() - 1);
-      if (d === 0) f.setDate(f.getDate() - 2);
+      if (f.getDay() === 6) f.setDate(f.getDate() - 1);
+      if (f.getDay() === 0) f.setDate(f.getDate() - 2);
       return f;
     }
 
-    // un mes antes + 3–5 días, y con día de la semana
     function generarFechaInicioTrabajo(base) {
       const f = new Date(base);
       f.setMonth(f.getMonth() - 1);
-      const diasExtra = 3 + Math.floor(Math.random() * 3); // 3,4,5
-      f.setDate(f.getDate() - diasExtra);
+      f.setDate(f.getDate() - (3 + Math.floor(Math.random() * 3)));
       return f;
     }
 
-    // descripción según tipo de licencia (no es definición legal, solo texto práctico)
     function descripcionEquipo(tipo) {
-      if (tipo === "D1") {
-        return "vehículos livianos de transporte de carga, dentro de los parámetros permitidos para la licencia tipo D1";
-      } else if (tipo === "D2") {
-        return "vehículos pesados de transporte de carga y equipo similar, dentro de los parámetros permitidos para la licencia tipo D2";
-      } else { // D3
-        return "montacargas y equipo industrial de carga, dentro de los parámetros permitidos para la licencia tipo D3";
-      }
+      if (tipo === "D1") return "vehículos livianos de transporte de carga autorizados para licencia tipo D1";
+      if (tipo === "D2") return "vehículos pesados de transporte de carga autorizados para licencia tipo D2";
+      return "montacargas y equipo industrial autorizado para licencia tipo D3";
     }
 
     function generarCarta() {
       const sedeCiudad = document.getElementById("sedeCiudad").value.trim() || "____________";
-      const nombreTrabajador = document.getElementById("nombreTrabajador").value.trim() || "_____________________________";
-      const cedulaTrabajador = document.getElementById("cedulaTrabajador").value.trim() || "___________";
+      const nombre = document.getElementById("nombreTrabajador").value.trim() || "_____________________________";
+      const cedula = document.getElementById("cedulaTrabajador").value.trim() || "___________";
       const vecino = document.getElementById("vecino").value.trim() || "_______________________";
       const correo = document.getElementById("correo").value.trim() || "_______________________";
       const telefono = document.getElementById("telefono").value.trim() || "___________";
-      const tipoLicencia = document.getElementById("tipoLicencia").value;
+      const tipo = document.getElementById("tipoLicencia").value;
 
       const hoy = ajustarFechaHabil(new Date());
       const fechaInicio = generarFechaInicioTrabajo(hoy);
@@ -230,7 +205,7 @@
       const fechaCartaLinea = formatearFecha(hoy);
       const fechaInicioTexto = formatearFechaConDia(fechaInicio);
       const sedeLinea = `Sede Regional de Educación Vial ${sedeCiudad}`;
-      const descEquipo = descripcionEquipo(tipoLicencia);
+      const descEquipo = descripcionEquipo(tipo);
 
       document.getElementById("carta").innerHTML = `
 <b>${fechaCartaLinea}</b><br><br>
@@ -241,43 +216,33 @@
 <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
 
 <b>Estimados señores:</b><br>
-Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi calidad de <b>representante de Inversiones Acosta Durán del Caribe S.A.</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombreTrabajador}</b>, cédula de identidad <b>${cedulaTrabajador}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${descEquipo}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br>
-Durante este período, el señor <b>${nombreTrabajador}</b> ha demostrado responsabilidad, disciplina y habilidades suficientes para desempeñarse de manera segura en operaciones prácticas de carga y equipo afín.<br><br>
+Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>Patrón</b> de la empresa <b>Inversiones Acosta Durán del Caribe S.A.</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${descEquipo}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br><br>
 
-La presente constancia se emite únicamente para fines de <b>certificación de experiencia operativa</b> ante la Dirección General de Educación Vial, para la tramitación de la licencia tipo <b>${tipoLicencia}</b>.<br><br>
+Durante este período, el señor <b>${nombre}</b> ha demostrado responsabilidad, disciplina y habilidades suficientes para desempeñarse de manera segura en las operaciones prácticas del equipo mencionado.<br><br>
 
-<b>Esta certificación tiene carácter exclusivamente informativo y no constituye relación laboral, vinculación contractual, subordinación, remuneración ni reconocimiento de derechos laborales o de seguridad social. No genera obligación patronal ni de aseguramiento ante la CCSS para Inversiones Acosta Durán del Caribe S.A.</b><br><br>
+La presente constancia se emite únicamente para fines de <b>certificación de experiencia operativa</b> ante la Dirección General de Educación Vial, para la tramitación de la licencia tipo <b>${tipo}</b>.<br><br>
+
+<b>Esta certificación es de carácter formativo y no constituye relación laboral, vínculo contractual, subordinación, remuneración, ni genera derechos laborales de ningún tipo para el participante.</b><br><br>
 
 Agradezco de antemano la atención prestada a la presente.<br><br>
 
 Atentamente,<br><br>
 ___________________________<br>
 <b>Neal Ariel Acosta Castro</b><br>
-Representante<br>
+<b>Patrón</b><br>
 <b>Inversiones Acosta Durán del Caribe S.A.</b><br>
 Cédula: <b>7-0262-0124</b><br>
 Tel.: <b>8977-5801</b>`;
     }
 
     function copiarTexto() {
-      const carta = document.getElementById("carta");
-      const texto = carta.innerText || "";
-      if (!texto.trim()) return;
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(texto)
-          .then(() => alert("Texto copiado. Pegalo en Word si querés."))
-          .catch(() => alert("No se pudo copiar automáticamente, pero podés seleccionar y copiar a mano."));
-      } else {
-        alert("Tu navegador no permite copia automática. Seleccioná el texto y copia manualmente (Ctrl+C).");
-      }
+      const carta = document.getElementById("carta").innerText;
+      navigator.clipboard.writeText(carta)
+        .then(() => alert("Texto copiado."))
+        .catch(() => alert("Tu navegador no permite copia automática."));
     }
 
-    // Generar una carta de ejemplo al cargar
     window.addEventListener("DOMContentLoaded", generarCarta);
   </script>
 </body>
 </html>
-
-
-
-
