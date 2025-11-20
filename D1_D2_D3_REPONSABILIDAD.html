@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Carta Laboral - Responsabilidad Patronal</title>
+  <style>
+    body {
+      font-family: "Times New Roman", serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+    }
+    .contenedor {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .formulario {
+      background: #ffffff;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    .form-group {
+      margin-bottom: 8px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+    input, select {
+      width: 100%;
+      padding: 5px 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 8px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #333;
+      background: #fff;
+      margin-right: 5px;
+    }
+    button:hover {
+      background: #f3f3f3;
+    }
+    .carta-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+    .carta {
+      background: #ffffff;
+      padding: 35px 50px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.15);
+      line-height: 1.15;
+      font-size: 14px;
+      white-space: pre-wrap;
+      width: 100%;
+      max-width: 700px;
+    }
+    .acciones {
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    @page {
+      size: A4;
+      margin: 2cm;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        margin: 0;
+        padding: 0;
+      }
+      .formulario, .acciones, h1 {
+        display: none;
+      }
+      .contenedor {
+        margin: 0;
+        padding: 0;
+        max-width: none;
+      }
+      .carta-wrapper, .carta {
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <h1>Carta de Responsabilidad Patronal</h1>
+
+    <div class="formulario">
+      <div class="form-group">
+        <label for="sedeCiudad">Ciudad de la sede regional:</label>
+        <input type="text" id="sedeCiudad" placeholder="Ej.: Limón, Guápiles, Alajuela">
+      </div>
+
+      <div class="form-group">
+        <label for="nombreTrabajador">Nombre completo del trabajador:</label>
+        <input type="text" id="nombreTrabajador" placeholder="Nombre del trabajador">
+      </div>
+
+      <div class="form-group">
+        <label for="cedulaTrabajador">Cédula del trabajador:</label>
+        <input type="text" id="cedulaTrabajador" placeholder="0-0000-0000">
+      </div>
+
+      <div class="form-group">
+        <label for="vecino">Lugar de vecindad:</label>
+        <input type="text" id="vecino" placeholder="Ej.: Guápiles, Pococí, Limón">
+      </div>
+
+      <div class="form-group">
+        <label for="correo">Correo electrónico del trabajador:</label>
+        <input type="email" id="correo" placeholder="correo@ejemplo.com">
+      </div>
+
+      <div class="form-group">
+        <label for="telefono">Teléfono del trabajador:</label>
+        <input type="text" id="telefono" placeholder="0000-0000">
+      </div>
+
+      <div class="form-group">
+        <label for="tipoLicencia">Tipo de licencia a solicitar:</label>
+        <select id="tipoLicencia">
+          <option value="D1">D1</option>
+          <option value="D2">D2</option>
+          <option value="D3" selected>D3</option>
+        </select>
+      </div>
+
+      <button type="button" onclick="generarCarta()">Generar carta</button>
+      <button type="button" onclick="copiarTexto()">Copiar texto plano</button>
+    </div>
+
+    <div class="carta-wrapper">
+      <div id="carta" class="carta"></div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" onclick="window.print()">Imprimir / Guardar como PDF</button>
+    </div>
+  </div>
+
+  <script>
+    const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+    const DIAS = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+
+    function formatearFecha(fecha) {
+      return `${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
+    }
+
+    function formatearFechaConDia(fecha) {
+      return `${DIAS[fecha.getDay()]} ${fecha.getDate()} de ${MESES[fecha.getMonth()]} del ${fecha.getFullYear()}`;
+    }
+
+    function ajustarFechaHabil(fecha) {
+      const f = new Date(fecha);
+      if (f.getDay() === 6) f.setDate(f.getDate() - 1);
+      if (f.getDay() === 0) f.setDate(f.getDate() - 2);
+      return f;
+    }
+
+    function generarFechaInicioTrabajo(base) {
+      const f = new Date(base);
+      f.setMonth(f.getMonth() - 1);
+      f.setDate(f.getDate() - (3 + Math.floor(Math.random() * 3)));
+      return f;
+    }
+
+    function descripcionEquipo(tipo) {
+      if (tipo === "D1") return "vehículos livianos de transporte de carga autorizados para licencia tipo D1";
+      if (tipo === "D2") return "vehículos pesados de transporte de carga autorizados para licencia tipo D2";
+      return "montacargas y equipo industrial autorizado para licencia tipo D3";
+    }
+
+    function generarCarta() {
+      const sedeCiudad = document.getElementById("sedeCiudad").value.trim() || "____________";
+      const nombre = document.getElementById("nombreTrabajador").value.trim() || "_____________________________";
+      const cedula = document.getElementById("cedulaTrabajador").value.trim() || "___________";
+      const vecino = document.getElementById("vecino").value.trim() || "_______________________";
+      const correo = document.getElementById("correo").value.trim() || "_______________________";
+      const telefono = document.getElementById("telefono").value.trim() || "___________";
+      const tipo = document.getElementById("tipoLicencia").value;
+
+      const hoy = ajustarFechaHabil(new Date());
+      const fechaInicio = generarFechaInicioTrabajo(hoy);
+
+      const fechaCartaLinea = formatearFecha(hoy);
+      const fechaInicioTexto = formatearFechaConDia(fechaInicio);
+      const sedeLinea = `Sede Regional de Educación Vial ${sedeCiudad}`;
+      const descEquipo = descripcionEquipo(tipo);
+
+      document.getElementById("carta").innerHTML = `
+<b>${fechaCartaLinea}</b><br><br>
+<b>Señores:</b><br>
+<b>${sedeLinea}</b><br>
+<b>Departamento de Evaluación de Conductores</b><br>
+<b>Dirección General de Educación Vial</b><br>
+<b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
+
+<b>Estimados señores:</b><br>
+Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>Patrón</b> de la empresa <b>Inversiones Acosta Durán del Caribe S.A.</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñando funciones relacionadas con la operación de <b>${descEquipo}</b>.<br><br>
+
+El señor <b>${nombre}</b> ha demostrado responsabilidad, disciplina y capacidad para desempeñar dichas labores de forma segura y competente.<br><br>
+
+Por lo anterior, solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la licencia tipo <b>${tipo}</b>.<br><br>
+
+Agradezco de antemano la atención prestada a esta solicitud.<br><br>
+
+Atentamente,<br><br>
+___________________________<br>
+<b>Neal Ariel Acosta Castro</b><br>
+<b>Patrón</b><br>
+<b>Inversiones Acosta Durán del Caribe S.A.</b><br>
+Cédula: <b>7-0262-0124</b><br>
+Tel.: <b>8977-5801</b>`;
+    }
+
+    function copiarTexto() {
+      const carta = document.getElementById("carta").innerText;
+      navigator.clipboard.writeText(carta)
+        .then(() => alert("Texto copiado."))
+        .catch(() => alert("No se pudo copiar automáticamente."));
+    }
+
+    window.addEventListener("DOMContentLoaded", generarCarta);
+  </script>
+</body>
+</html>
