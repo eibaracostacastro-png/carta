@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Carta Laboral - Responsabilidad Patronal</title>
+  <title>Carta Licencias D1, D2, D3</title>
   <style>
     body {
       font-family: "Times New Roman", serif;
@@ -103,12 +103,12 @@
 </head>
 <body>
   <div class="contenedor">
-    <h1>Carta de Responsabilidad Patronal</h1>
+    <h1>Carta para licencias D1 · D2 · D3</h1>
 
     <div class="formulario">
       <div class="form-group">
         <label for="sedeCiudad">Ciudad de la sede regional:</label>
-        <input type="text" id="sedeCiudad" placeholder="Ej.: Limón, Guápiles, Alajuela">
+        <input type="text" id="sedeCiudad" placeholder="Ej.: Guápiles, Limón, Alajuela">
       </div>
 
       <div class="form-group">
@@ -122,8 +122,8 @@
       </div>
 
       <div class="form-group">
-        <label for="vecino">Lugar de vecindad:</label>
-        <input type="text" id="vecino" placeholder="Ej.: Guápiles, Pococí, Limón">
+        <label for="vecino">Lugar de vecindad / dirección:</label>
+        <input type="text" id="vecino" placeholder="Ej.: Guápiles, Pococí, Limón, 250 m sur de...">
       </div>
 
       <div class="form-group">
@@ -172,15 +172,15 @@
 
     function ajustarFechaHabil(fecha) {
       const f = new Date(fecha);
-      if (f.getDay() === 6) f.setDate(f.getDate() - 1);
-      if (f.getDay() === 0) f.setDate(f.getDate() - 2);
+      if (f.getDay() === 6) f.setDate(f.getDate() - 1);   // sábado -> viernes
+      if (f.getDay() === 0) f.setDate(f.getDate() - 2);   // domingo -> viernes
       return f;
     }
 
     function generarFechaInicioTrabajo(base) {
       const f = new Date(base);
       f.setMonth(f.getMonth() - 1);
-      f.setDate(f.getDate() - (3 + Math.floor(Math.random() * 3)));
+      f.setDate(f.getDate() - (3 + Math.floor(Math.random() * 3))); // 3,4,5 días menos
       return f;
     }
 
@@ -191,7 +191,7 @@
     }
 
     function generarCarta() {
-      const sedeCiudad = document.getElementById("sedeCiudad").value.trim() || "____________";
+      const sedeCiudad = document.getElementById("sedeCiudad").value.trim() || "Guápiles";
       const nombre = document.getElementById("nombreTrabajador").value.trim() || "_____________________________";
       const cedula = document.getElementById("cedulaTrabajador").value.trim() || "___________";
       const vecino = document.getElementById("vecino").value.trim() || "_______________________";
@@ -207,8 +207,42 @@
       const sedeLinea = `Sede Regional de Educación Vial ${sedeCiudad}`;
       const descEquipo = descripcionEquipo(tipo);
 
-      document.getElementById("carta").innerHTML = `
+      let htmlCarta = "";
+
+      if (tipo === "D1") {
+        // 📄 TEXTO ESPECIAL D1 (como la foto)
+        htmlCarta = `
 <b>${fechaCartaLinea}</b><br><br>
+
+Señores<br>
+<b>${sedeLinea}</b><br>
+Departamento Evaluación de Conductores<br>
+Dirección General de Educación Vial<br><br>
+
+Estimados señores:<br><br>
+
+Por este medio quien suscribe <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, dueño de la empresa <b>Acosta Transporte y Maquinaria Pesada</b> con personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, labora actualmente para esta empresa desde el día <b>${fechaInicioTexto}</b>.<br><br>
+
+Certifico que el interesado opera y tiene amplia experiencia en el manejo de <b>chapulín de llantas</b>, por ende doy fe de que el mismo labora actualmente en esta empresa.<br><br>
+
+Se les solicita continuar el trámite para la confección de la licencia de conducir categoría <b>D1</b> ante la Dirección General de Educación Vial del MOPT.<br><br>
+
+Agradezco de antemano la valiosa atención que se sirvan prestar a la presente solicitud.<br><br>
+
+Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, la misma a solicitud del interesado a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del <b>${hoy.getFullYear()}</b>.<br><br>
+
+Atentamente,<br><br>
+___________________________<br>
+<b>Neal Ariel Acosta Castro</b><br>
+Céd.: <b>7-0262-0124</b><br>
+<b>Acosta Transporte y Maquinaria Pesada</b><br>
+Tel.: <b>8977-5801</b>
+        `;
+      } else {
+        // 🌐 TEXTO GENERAL PARA D2 Y D3
+        htmlCarta = `
+<b>${fechaCartaLinea}</b><br><br>
+
 <b>Señores:</b><br>
 <b>${sedeLinea}</b><br>
 <b>Departamento de Evaluación de Conductores</b><br>
@@ -224,20 +258,27 @@ Por lo anterior, solicito de la manera más atenta continuar con el trámite cor
 
 Agradezco de antemano la atención prestada a esta solicitud.<br><br>
 
+Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
+
 Atentamente,<br><br>
 ___________________________<br>
 <b>Neal Ariel Acosta Castro</b><br>
 <b>Patrón</b><br>
 <b>Inversiones Acosta Durán del Caribe S.A.</b><br>
 Cédula: <b>7-0262-0124</b><br>
-Tel.: <b>8977-5801</b>`;
+Tel.: <b>8977-5801</b>
+        `;
+      }
+
+      document.getElementById("carta").innerHTML = htmlCarta;
     }
 
     function copiarTexto() {
       const carta = document.getElementById("carta").innerText;
+      if (!carta.trim()) return;
       navigator.clipboard.writeText(carta)
         .then(() => alert("Texto copiado."))
-        .catch(() => alert("No se pudo copiar automáticamente."));
+        .catch(() => alert("No se pudo copiar automáticamente, pero podés copiarlo a mano."));
     }
 
     window.addEventListener("DOMContentLoaded", generarCarta);
