@@ -1,3 +1,412 @@
-<!DOCTYPE html> <html lang="es"> <head> <meta charset="UTF-8"> <title>Carta Licencias D1, D2, D3 - Acosta Transporte y Maquinaria Pesada</title> <style> body { font-family: "Times New Roman", serif; background: #f2f2f2; margin: 0; padding: 20px; } .contenedor { max-width: 900px; margin: 0 auto; } h1 { text-align: center; margin-bottom: 10px; } .formulario { background: #ffffff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); margin-bottom: 15px; font-size: 14px; } .form-group { margin-bottom: 8px; } label { display: block; font-weight: bold; margin-bottom: 3px; } input, select { width: 100%; padding: 5px 8px; font-size: 14px; box-sizing: border-box; } .radio-inline { display: inline-block; margin-right: 15px; font-weight: normal; } .radio-inline input { width: auto; margin-right: 5px; } button { padding: 8px 15px; font-size: 14px; cursor: pointer; border-radius: 4px; border: 1px solid #333; background: #fff; margin-right: 5px; margin-top: 5px; } button:hover { background: #f3f3f3; } .carta-wrapper { display: flex; justify-content: center; } .carta { background: #ffffff; padding: 35px 50px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.15); line-height: 1.15; font-size: 14px; white-space: pre-wrap; width: 100%; max-width: 700px; } .acciones { margin-top: 10px; text-align: right; } @page { size: A4; margin: 2cm; } @media print { body { background: #ffffff; margin: 0; padding: 0; } .formulario, h1 { display: none; } .contenedor { margin: 0; padding: 0; max-width: none; } .carta-wrapper, .carta { margin: 0; padding: 0; box-shadow: none; border-radius: 0; max-width: none; } .acciones { display: none; } } </style> </head> <body> <div class="contenedor"> <h1>Cartas para licencias D1 · D2 · D3</h1> <div class="formulario"> <div class="form-group"> <label for="sedeCiudad">Ciudad de la sede regional:</label> <input type="text" id="sedeCiudad" placeholder="Ej.: Guápiles, Limón, Alajuela"> </div> <div class="form-group"> <label for="nombreTrabajador">Nombre completo del trabajador / participante:</label> <input type="text" id="nombreTrabajador" placeholder="Nombre de la persona"> </div> <div class="form-group"> <label for="cedulaTrabajador">Cédula:</label> <input type="text" id="cedulaTrabajador" placeholder="0-0000-0000"> </div> <div class="form-group"> <label for="vecino">Lugar de vecindad / dirección:</label> <input type="text" id="vecino" placeholder="Ej.: Guápiles, Pococí, Limón, 250 m sur de..."> </div> <div class="form-group"> <label for="correo">Correo electrónico:</label> <input type="email" id="correo" placeholder="correo@ejemplo.com"> </div> <div class="form-group"> <label for="telefono">Teléfono:</label> <input type="text" id="telefono" placeholder="0000-0000"> </div> <div class="form-group"> <label for="tipoLicencia">Tipo de licencia a solicitar:</label> <select id="tipoLicencia"> <option value="D1">D1 - Tractor de llanta</option> <option value="D2">D2 - Tractor de oruga</option> <option value="D3" selected>D3 - Montacargas / equipo especial</option> </select> </div> <div class="form-group"> <label>Modo de carta (responsabilidad):</label> <label class="radio-inline"> <input type="radio" name="modoResp" value="con" checked> Con responsabilidad patronal </label> <label class="radio-inline"> <input type="radio" name="modoResp" value="sin"> Sin responsabilidad patronal </label> </div> <button type="button" onclick="generarCarta()">Generar carta</button> <button type="button" onclick="copiarTexto()">Copiar texto plano</button> </div> <div class="carta-wrapper"> <div id="carta" class="carta"></div> </div> <div class="acciones"> <button type="button" onclick="window.print()">Imprimir / Guardar como PDF</button> <button type="button" onclick="abrirVistaLimpia()">Vista limpia para PDF</button> <button type="button" onclick="descargarPDF()">Descargar PDF</button> <button type="button" onclick="descargarWord()">Descargar Word</button> </div> </div> <!-- Librería para generar PDF desde HTML --> <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script> <script> const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"]; const DIAS = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"]; function formatearFecha(fecha) { return ${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}; } function formatearFechaConDia(fecha) { return ${DIAS[fecha.getDay()]} ${fecha.getDate()} de ${MESES[fecha.getMonth()]} del ${fecha.getFullYear()}; } function ajustarFechaHabil(fecha) { const f = new Date(fecha); if (f.getDay() === 6) f.setDate(f.getDate() - 1); // sábado -> viernes if (f.getDay() === 0) f.setDate(f.getDate() - 2); // domingo -> viernes return f; } function generarFechaInicioTrabajo(base) { const f = new Date(base); f.setMonth(f.getMonth() - 1); f.setDate(f.getDate() - (3 + Math.floor(Math.random() * 3))); return f; } function tipoMaquinariaFrase(tipo) { if (tipo === "D1") { return "tractor de llanta, maquinaria especial agrícola autorizada para la licencia tipo D1"; } else if (tipo === "D2") { return "tractor de oruga, maquinaria especial de construcción autorizada para la licencia tipo D2"; } else { return "montacargas y equipo especial de carga (maquinaria de trabajo autorizada para la licencia tipo D3)"; } } function nombreMaquinariaCorto(tipo) { if (tipo === "D1") return "tractor de llanta"; if (tipo === "D2") return "tractor de oruga"; return "montacargas"; } function obtenerModoResponsabilidad() { const radios = document.getElementsByName("modoResp"); for (const r of radios) { if (r.checked) return r.value; // "con" o "sin" } return "con"; } function generarCarta() { const sedeCiudad = document.getElementById("sedeCiudad").value.trim() || "Guápiles"; const nombre = document.getElementById("nombreTrabajador").value.trim() || "_____________________________"; const cedula = document.getElementById("cedulaTrabajador").value.trim() || "___________"; const vecino = document.getElementById("vecino").value.trim() || "_______________________"; const correo = document.getElementById("correo").value.trim() || "_______________________"; const telefono = document.getElementById("telefono").value.trim() || "___________"; const tipo = document.getElementById("tipoLicencia").value; const modo = obtenerModoResponsabilidad(); const hoy = ajustarFechaHabil(new Date()); const fechaInicio = generarFechaInicioTrabajo(hoy); const fechaCartaLinea = formatearFecha(hoy); const fechaInicioTexto = formatearFechaConDia(fechaInicio); const sedeLinea = Sede Regional de Educación Vial ${sedeCiudad}; const maquinariaFrase = tipoMaquinariaFrase(tipo); const maquinariaCorta = nombreMaquinariaCorto(tipo); let htmlCarta = ""; if (modo === "con") { // CON RESPONSABILIDAD PATRONAL htmlCarta = <b>${fechaCartaLinea}</b><br><br> <b>Señores:</b><br> <b>${sedeLinea}</b><br> <b>Departamento de Evaluación de Conductores</b><br> <b>Dirección General de Educación Vial</b><br> <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br> <b>Estimados señores:</b><br> Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>Patrón</b> de la empresa <b>Acosta Transporte y Maquinaria Pesada</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñándose como operador de <b>${maquinariaFrase}</b>.<br><br> Certifico que el señor <b>${nombre}</b> opera <b>${maquinariaCorta}</b> y cuenta con amplia experiencia en el manejo de dicha maquinaria, ejecutando sus labores de forma responsable, segura y competente.<br><br> Por lo anterior, solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la licencia tipo <b>${tipo}</b>, para la operación de <b>${maquinariaCorta}</b> indicada en la presente certificación.<br><br> Agradezco de antemano la atención prestada a esta solicitud.<br><br> Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br> Atentamente,<br><br> ___________________________<br> <b>Neal Ariel Acosta Castro</b><br> <b>Patrón</b><br> <b>Acosta Transporte y Maquinaria Pesada</b><br> Cédula: <b>7-0262-0124</b><br> Tel.: <b>8977-5801</b>; } else { // SIN RESPONSABILIDAD PATRONAL (PRÁCTICAS) htmlCarta = <b>${fechaCartaLinea}</b><br><br> <b>Señores:</b><br> <b>${sedeLinea}</b><br> <b>Departamento de Evaluación de Conductores</b><br> <b>Dirección General de Educación Vial</b><br> <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br> <b>Estimados señores:</b><br> Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi calidad de <b>Patrón</b> de la empresa <b>Acosta Transporte y Maquinaria Pesada</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${maquinariaFrase}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br><br> Durante este período, el señor <b>${nombre}</b> ha demostrado responsabilidad, disciplina y habilidades suficientes para desempeñarse de manera segura en las operaciones prácticas del equipo indicado.<br><br> La presente constancia se emite únicamente para fines de <b>certificación de experiencia operativa</b> ante la Dirección General de Educación Vial, para la tramitación de la licencia tipo <b>${tipo}</b>.<br><br> <b>Esta certificación es de carácter exclusivamente formativo y no constituye relación laboral, vínculo contractual, subordinación, remuneración, ni genera derechos laborales de ningún tipo para el participante.</b><br><br> Agradezco de antemano la atención prestada a la presente.<br><br> Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br> Atentamente,<br><br> ___________________________<br> <b>Neal Ariel Acosta Castro</b><br> <b>Patrón</b><br> <b>Acosta Transporte y Maquinaria Pesada</b><br> Cédula: <b>7-0262-0124</b><br> Tel.: <b>8977-5801</b>; } document.getElementById("carta").innerHTML = htmlCarta; } function copiarTexto() { const carta = document.getElementById("carta").innerText; if (!carta.trim()) return; navigator.clipboard.writeText(carta) .then(() => alert("Texto copiado.")) .catch(() => alert("No se pudo copiar automáticamente, pero podés copiarlo a mano.")); } function abrirVistaLimpia() { const cartaHTML = document.getElementById("carta").innerHTML; if (!cartaHTML.trim()) return; const win = window.open('', '_blank'); win.document.write(<!DOCTYPE html> <html lang="es"> <head> <meta charset="UTF-8"> <title>Carta lista para PDF</title> <style> body { font-family: "Times New Roman", serif; margin: 40px; } </style> </head> <body>${cartaHTML}</body> </html>); win.document.close(); } function descargarPDF() { const carta = document.getElementById("carta"); if (!carta.innerText.trim()) return; const opt = { margin: 10, filename: 'Carta_Licencia_D.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }; html2pdf().set(opt).from(carta).save(); } function descargarWord() { const cartaHTML = document.getElementById("carta").innerHTML; if (!cartaHTML.trim()) return; const contenido = <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'> <head><meta charset="UTF-8"><title>Carta</title></head> <body style="font-family:'Times New Roman',serif;"> ${cartaHTML} </body></html>; const blob = new Blob(['\ufeff', contenido], { type: 'application/msword' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'Carta_Licencia_D.doc'; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); } window.addEventListener("DOMContentLoaded", generarCarta); </script> </body> </html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Carta Licencias D1, D2, D3 - Acosta Transporte y Maquinaria Pesada</title>
+  <style>
+    body {
+      font-family: "Times New Roman", serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+    }
+    .contenedor {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .formulario {
+      background: #ffffff;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    .form-group {
+      margin-bottom: 8px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+    input, select {
+      width: 100%;
+      padding: 5px 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .radio-inline {
+      display: inline-block;
+      margin-right: 15px;
+      font-weight: normal;
+    }
+    .radio-inline input {
+      width: auto;
+      margin-right: 5px;
+    }
+    button {
+      padding: 8px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #333;
+      background: #fff;
+      margin-right: 5px;
+      margin-top: 5px;
+    }
+    button:hover {
+      background: #f3f3f3;
+    }
+    .carta-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+    .carta {
+      background: #ffffff;
+      padding: 25px 40px; /* más compacta para que quepa en 1 página */
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.15);
+      line-height: 1.15;
+      font-size: 14px;
+      white-space: pre-wrap;
+      width: 100%;
+      max-width: 700px;
+    }
+    /* interlineado solo en el texto central */
+    .carta .cuerpo {
+      line-height: 1.4;
+    }
+    .acciones {
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    @page {
+      size: A4;
+      margin: 1.3cm; /* margen más pequeño para aprovechar altura */
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        margin: 0;
+        padding: 0;
+      }
+      .formulario, h1 {
+        display: none;
+      }
+      .contenedor {
+        margin: 0;
+        padding: 0;
+        max-width: none;
+      }
+      .carta-wrapper, .carta {
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+        max-width: none;
+      }
+      .acciones {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <h1>Cartas para licencias D1 · D2 · D3</h1>
+
+    <div class="formulario">
+      <div class="form-group">
+        <label for="sedeCiudad">Ciudad de la sede regional:</label>
+        <input type="text" id="sedeCiudad" placeholder="Ej.: Guápiles, Limón, Alajuela">
+      </div>
+
+      <div class="form-group">
+        <label for="nombreTrabajador">Nombre completo del trabajador / participante:</label>
+        <input type="text" id="nombreTrabajador" placeholder="Nombre de la persona">
+      </div>
+
+      <div class="form-group">
+        <label for="cedulaTrabajador">Cédula:</label>
+        <input type="text" id="cedulaTrabajador" placeholder="0-0000-0000">
+      </div>
+
+      <div class="form-group">
+        <label for="vecino">Lugar de vecindad / dirección:</label>
+        <input type="text" id="vecino" placeholder="Ej.: Guápiles, Pococí, Limón, 250 m sur de...">
+      </div>
+
+      <div class="form-group">
+        <label for="correo">Correo electrónico:</label>
+        <input type="email" id="correo" placeholder="correo@ejemplo.com">
+      </div>
+
+      <div class="form-group">
+        <label for="telefono">Teléfono:</label>
+        <input type="text" id="telefono" placeholder="0000-0000">
+      </div>
+
+      <div class="form-group">
+        <label for="tipoLicencia">Tipo de licencia a solicitar:</label>
+        <select id="tipoLicencia">
+          <option value="D1">D1 - Tractor de llanta</option>
+          <option value="D2">D2 - Tractor de oruga</option>
+          <option value="D3" selected>D3 - Montacargas / equipo especial</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Modo de carta (responsabilidad):</label>
+        <label class="radio-inline">
+          <input type="radio" name="modoResp" value="con" checked>
+          Con responsabilidad patronal
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="modoResp" value="sin">
+          Sin responsabilidad patronal
+        </label>
+      </div>
+
+      <button type="button" onclick="generarCarta()">Generar carta</button>
+      <button type="button" onclick="copiarTexto()">Copiar texto plano</button>
+    </div>
+
+    <div class="carta-wrapper">
+      <div id="carta" class="carta"></div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" onclick="window.print()">Imprimir / Guardar como PDF</button>
+      <button type="button" onclick="abrirVistaLimpia()">Vista limpia para PDF</button>
+      <button type="button" onclick="descargarPDF()">Descargar PDF</button>
+      <button type="button" onclick="descargarWord()">Descargar Word</button>
+    </div>
+  </div>
+
+  <!-- Librería para generar PDF desde HTML -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+  <script>
+    const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+    const DIAS = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+
+    function formatearFecha(fecha) {
+      return `${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
+    }
+
+    function formatearFechaConDia(fecha) {
+      return `${DIAS[fecha.getDay()]} ${fecha.getDate()} de ${MESES[fecha.getMonth()]} del ${fecha.getFullYear()}`;
+    }
+
+    function ajustarFechaHabil(fecha) {
+      const f = new Date(fecha);
+      if (f.getDay() === 6) f.setDate(f.getDate() - 1); // sábado -> viernes
+      if (f.getDay() === 0) f.setDate(f.getDate() - 2); // domingo -> viernes
+      return f;
+    }
+
+    function generarFechaInicioTrabajo(base) {
+      const f = new Date(base);
+      f.setMonth(f.getMonth() - 1);
+      f.setDate(f.getDate() - (3 + Math.floor(Math.random() * 3)));
+      return f;
+    }
+
+    function tipoMaquinariaFrase(tipo) {
+      if (tipo === "D1") {
+        return "tractor de llanta, maquinaria especial agrícola autorizada para la licencia tipo D1";
+      } else if (tipo === "D2") {
+        return "tractor de oruga, maquinaria especial de construcción autorizada para la licencia tipo D2";
+      } else {
+        return "montacargas y equipo especial de carga (maquinaria de trabajo autorizada para la licencia tipo D3)";
+      }
+    }
+
+    function nombreMaquinariaCorto(tipo) {
+      if (tipo === "D1") return "tractor de llanta";
+      if (tipo === "D2") return "tractor de oruga";
+      return "montacargas";
+    }
+
+    function obtenerModoResponsabilidad() {
+      const radios = document.getElementsByName("modoResp");
+      for (const r of radios) {
+        if (r.checked) return r.value; // "con" o "sin"
+      }
+      return "con";
+    }
+
+    function generarCarta() {
+      const sedeCiudad = document.getElementById("sedeCiudad").value.trim() || "Guápiles";
+      const nombre = document.getElementById("nombreTrabajador").value.trim() || "_____________________________";
+      const cedula = document.getElementById("cedulaTrabajador").value.trim() || "___________";
+      const vecino = document.getElementById("vecino").value.trim() || "_______________________";
+      const correo = document.getElementById("correo").value.trim() || "_______________________";
+      const telefono = document.getElementById("telefono").value.trim() || "___________";
+      const tipo = document.getElementById("tipoLicencia").value;
+      const modo = obtenerModoResponsabilidad();
+
+      const hoy = ajustarFechaHabil(new Date());
+      const fechaInicio = generarFechaInicioTrabajo(hoy);
+
+      const fechaCartaLinea = formatearFecha(hoy);
+      const fechaInicioTexto = formatearFechaConDia(fechaInicio);
+      const sedeLinea = `Sede Regional de Educación Vial ${sedeCiudad}`;
+      const maquinariaFrase = tipoMaquinariaFrase(tipo);
+      const maquinariaCorta = nombreMaquinariaCorto(tipo);
+
+      let htmlCarta = "";
+
+      if (modo === "con") {
+        // CON RESPONSABILIDAD PATRONAL
+        htmlCarta = `
+<b>${fechaCartaLinea}</b><br><br>
+
+<b>Señores:</b><br>
+<b>${sedeLinea}</b><br>
+<b>Departamento de Evaluación de Conductores</b><br>
+<b>Dirección General de Educación Vial</b><br>
+<b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
+
+<div class="cuerpo">
+<b>Estimados señores:</b><br>
+Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>Patrón</b> de la empresa <b>Acosta Transporte y Maquinaria Pesada</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñándose como operador de <b>${maquinariaFrase}</b>.<br><br>
+
+Certifico que el señor <b>${nombre}</b> opera <b>${maquinariaCorta}</b> y cuenta con amplia experiencia en el manejo de dicha maquinaria, ejecutando sus labores de forma responsable, segura y competente.<br><br>
+
+Por lo anterior, solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la licencia tipo <b>${tipo}</b>, para la operación de <b>${maquinariaCorta}</b> indicada en la presente certificación.<br><br>
+
+Agradezco de antemano la atención prestada a esta solicitud.<br><br>
+
+Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
+</div>
+
+Atentamente,<br><br>
+___________________________<br>
+<b>Neal Ariel Acosta Castro</b><br>
+<b>Patrón</b><br>
+<b>Acosta Transporte y Maquinaria Pesada</b><br>
+Cédula: <b>7-0262-0124</b><br>
+Tel.: <b>8977-5801</b>`;
+      } else {
+        // SIN RESPONSABILIDAD PATRONAL (PRÁCTICAS)
+        htmlCarta = `
+<b>${fechaCartaLinea}</b><br><br>
+
+<b>Señores:</b><br>
+<b>${sedeLinea}</b><br>
+<b>Departamento de Evaluación de Conductores</b><br>
+<b>Dirección General de Educación Vial</b><br>
+<b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
+
+<div class="cuerpo">
+<b>Estimados señores:</b><br>
+Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi calidad de <b>Patrón</b> de la empresa <b>Acosta Transporte y Maquinaria Pesada</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${maquinariaFrase}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br><br>
+
+Durante este período, el señor <b>${nombre}</b> ha demostrado responsabilidad, disciplina y habilidades suficientes para desempeñarse de manera segura en las operaciones prácticas del equipo indicado.<br><br>
+
+La presente constancia se emite únicamente para fines de <b>certificación de experiencia operativa</b> ante la Dirección General de Educación Vial, para la tramitación de la licencia tipo <b>${tipo}</b>.<br><br>
+
+<b>Esta certificación es de carácter exclusivamente formativo y no constituye relación laboral, vínculo contractual, subordinación, remuneración, ni genera derechos laborales de ningún tipo para el participante.</b><br><br>
+
+Agradezco de antemano la atención prestada a la presente.<br><br>
+
+Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
+</div>
+
+Atentamente,<br><br>
+___________________________<br>
+<b>Neal Ariel Acosta Castro</b><br>
+<b>Patrón</b><br>
+<b>Acosta Transporte y Maquinaria Pesada</b><br>
+Cédula: <b>7-0262-0124</b><br>
+Tel.: <b>8977-5801</b>`;
+      }
+
+      document.getElementById("carta").innerHTML = htmlCarta;
+    }
+
+    function copiarTexto() {
+      const carta = document.getElementById("carta").innerText;
+      if (!carta.trim()) return;
+      navigator.clipboard.writeText(carta)
+        .then(() => alert("Texto copiado."))
+        .catch(() => alert("No se pudo copiar automáticamente, pero podés copiarlo a mano."));
+    }
+
+    function abrirVistaLimpia() {
+      const cartaHTML = document.getElementById("carta").innerHTML;
+      if (!cartaHTML.trim()) return;
+      const win = window.open('', '_blank');
+      win.document.write(`<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Carta lista para PDF</title>
+  <style>
+    body {
+      font-family: "Times New Roman", serif;
+      margin: 25px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>${cartaHTML}</body>
+</html>`);
+      win.document.close();
+    }
+
+    function descargarPDF() {
+      const carta = document.getElementById("carta");
+      if (!carta.innerText.trim()) return;
+      const opt = {
+        margin: 10,
+        filename: 'Carta_Licencia_D.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(carta).save();
+    }
+
+    function descargarWord() {
+      const cartaHTML = document.getElementById("carta").innerHTML;
+      if (!cartaHTML.trim()) return;
+
+      const contenido = `
+<html xmlns:o='urn:schemas-microsoft-com:office:office'
+      xmlns:w='urn:schemas-microsoft-com:office:word'
+      xmlns='http://www.w3.org/TR/REC-html40'>
+<head><meta charset="UTF-8"><title>Carta</title></head>
+<body style="font-family:'Times New Roman',serif; line-height:1.4;">
+${cartaHTML}
+</body></html>`;
+
+      const blob = new Blob(['\ufeff', contenido], {
+        type: 'application/msword'
+      });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'Carta_Licencia_D.doc';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    window.addEventListener("DOMContentLoaded", generarCarta);
+  </script>
+</body>
+</html>
+
 
 
