@@ -71,11 +71,15 @@
       padding: 35px 50px;
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.15);
-      line-height: 1.5; /* <-- AQUÍ EL ÚNICO CAMBIO */
+      line-height: 1.15; /* volvemos al valor original */
       font-size: 14px;
       white-space: pre-wrap;
       width: 100%;
       max-width: 700px;
+    }
+    /* interlineado solo para el centro de la carta */
+    .carta .cuerpo {
+      line-height: 1.5;
     }
     .acciones {
       margin-top: 10px;
@@ -271,6 +275,7 @@
 <b>Dirección General de Educación Vial</b><br>
 <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
 
+<div class="cuerpo">
 <b>Estimados señores:</b><br>
 Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>Patrón</b> de la empresa <b>Acosta Transporte y Maquinaria Pesada</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñándose como operador de <b>${maquinariaFrase}</b>.<br><br>
 
@@ -281,6 +286,7 @@ Por lo anterior, solicito de la manera más atenta continuar con el trámite cor
 Agradezco de antemano la atención prestada a esta solicitud.<br><br>
 
 Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
+</div>
 
 Atentamente,<br><br>
 ___________________________<br>
@@ -300,6 +306,7 @@ Tel.: <b>8977-5801</b>`;
 <b>Dirección General de Educación Vial</b><br>
 <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
 
+<div class="cuerpo">
 <b>Estimados señores:</b><br>
 Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi calidad de <b>Patrón</b> de la empresa <b>Acosta Transporte y Maquinaria Pesada</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${maquinariaFrase}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br><br>
 
@@ -312,6 +319,7 @@ La presente constancia se emite únicamente para fines de <b>certificación de e
 Agradezco de antemano la atención prestada a la presente.<br><br>
 
 Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
+</div>
 
 Atentamente,<br><br>
 ___________________________<br>
@@ -346,6 +354,7 @@ Tel.: <b>8977-5801</b>`;
     body {
       font-family: "Times New Roman", serif;
       margin: 40px;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -376,7 +385,7 @@ Tel.: <b>8977-5801</b>`;
       xmlns:w='urn:schemas-microsoft-com:office:word'
       xmlns='http://www.w3.org/TR/REC-html40'>
 <head><meta charset="UTF-8"><title>Carta</title></head>
-<body style="font-family:'Times New Roman',serif;">
+<body style="font-family:'Times New Roman',serif; line-height:1.5;">
 ${cartaHTML}
 </body></html>`;
 
