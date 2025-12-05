@@ -40,6 +40,15 @@
       font-size: 14px;
       box-sizing: border-box;
     }
+    .radio-inline {
+      display: inline-block;
+      margin-right: 15px;
+      font-weight: normal;
+    }
+    .radio-inline input {
+      width: auto;
+      margin-right: 5px;
+    }
     button {
       padding: 8px 15px;
       font-size: 14px;
@@ -103,7 +112,7 @@
 </head>
 <body>
   <div class="contenedor">
-    <h1>Carta para licencias D1 · D2 · D3</h1>
+    <h1>Cartas para licencias D1 · D2 · D3</h1>
 
     <div class="formulario">
       <div class="form-group">
@@ -112,12 +121,12 @@
       </div>
 
       <div class="form-group">
-        <label for="nombreTrabajador">Nombre completo del trabajador:</label>
-        <input type="text" id="nombreTrabajador" placeholder="Nombre del trabajador">
+        <label for="nombreTrabajador">Nombre completo del trabajador / participante:</label>
+        <input type="text" id="nombreTrabajador" placeholder="Nombre de la persona">
       </div>
 
       <div class="form-group">
-        <label for="cedulaTrabajador">Cédula del trabajador:</label>
+        <label for="cedulaTrabajador">Cédula:</label>
         <input type="text" id="cedulaTrabajador" placeholder="0-0000-0000">
       </div>
 
@@ -127,22 +136,34 @@
       </div>
 
       <div class="form-group">
-        <label for="correo">Correo electrónico del trabajador:</label>
+        <label for="correo">Correo electrónico:</label>
         <input type="email" id="correo" placeholder="correo@ejemplo.com">
       </div>
 
       <div class="form-group">
-        <label for="telefono">Teléfono del trabajador:</label>
+        <label for="telefono">Teléfono:</label>
         <input type="text" id="telefono" placeholder="0000-0000">
       </div>
 
       <div class="form-group">
         <label for="tipoLicencia">Tipo de licencia a solicitar:</label>
         <select id="tipoLicencia">
-          <option value="D1">D1</option>
-          <option value="D2">D2</option>
-          <option value="D3" selected>D3</option>
+          <option value="D1">D1 - Tractor de llanta</option>
+          <option value="D2">D2 - Tractor de oruga</option>
+          <option value="D3" selected>D3 - Montacargas / equipo especial</option>
         </select>
+      </div>
+
+      <div class="form-group">
+        <label>Modo de carta (responsabilidad):</label>
+        <label class="radio-inline">
+          <input type="radio" name="modoResp" value="con" checked>
+          Con responsabilidad patronal
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="modoResp" value="sin">
+          Sin responsabilidad patronal
+        </label>
       </div>
 
       <button type="button" onclick="generarCarta()">Generar carta</button>
@@ -172,22 +193,42 @@
 
     function ajustarFechaHabil(fecha) {
       const f = new Date(fecha);
-      if (f.getDay() === 6) f.setDate(f.getDate() - 1);   // sábado -> viernes
-      if (f.getDay() === 0) f.setDate(f.getDate() - 2);   // domingo -> viernes
+      if (f.getDay() === 6) f.setDate(f.getDate() - 1); // sábado -> viernes
+      if (f.getDay() === 0) f.setDate(f.getDate() - 2); // domingo -> viernes
       return f;
     }
 
+    // Un mes antes, restando de 3 a 5 días, para fecha de inicio
     function generarFechaInicioTrabajo(base) {
       const f = new Date(base);
       f.setMonth(f.getMonth() - 1);
-      f.setDate(f.getDate() - (3 + Math.floor(Math.random() * 3))); // 3,4,5 días menos
+      f.setDate(f.getDate() - (3 + Math.floor(Math.random() * 3)));
       return f;
     }
 
-    function descripcionEquipo(tipo) {
-      if (tipo === "D1") return "vehículos livianos de transporte de carga autorizados para licencia tipo D1";
-      if (tipo === "D2") return "vehículos pesados de transporte de carga autorizados para licencia tipo D2";
-      return "montacargas y equipo industrial autorizado para licencia tipo D3";
+    // Descripción técnica según la licencia
+    function tipoMaquinariaFrase(tipo) {
+      if (tipo === "D1") {
+        return "tractor de llanta, maquinaria especial agrícola autorizada para la licencia tipo D1";
+      } else if (tipo === "D2") {
+        return "tractor de oruga, maquinaria especial de construcción autorizada para la licencia tipo D2";
+      } else {
+        return "montacargas y equipo especial de carga (maquinaria de trabajo autorizada para la licencia tipo D3)";
+      }
+    }
+
+    function nombreMaquinariaCorto(tipo) {
+      if (tipo === "D1") return "tractor de llanta";
+      if (tipo === "D2") return "tractor de oruga";
+      return "montacargas";
+    }
+
+    function obtenerModoResponsabilidad() {
+      const radios = document.getElementsByName("modoResp");
+      for (const r of radios) {
+        if (r.checked) return r.value; // "con" o "sin"
+      }
+      return "con";
     }
 
     function generarCarta() {
@@ -198,6 +239,7 @@
       const correo = document.getElementById("correo").value.trim() || "_______________________";
       const telefono = document.getElementById("telefono").value.trim() || "___________";
       const tipo = document.getElementById("tipoLicencia").value;
+      const modo = obtenerModoResponsabilidad();
 
       const hoy = ajustarFechaHabil(new Date());
       const fechaInicio = generarFechaInicioTrabajo(hoy);
@@ -205,41 +247,15 @@
       const fechaCartaLinea = formatearFecha(hoy);
       const fechaInicioTexto = formatearFechaConDia(fechaInicio);
       const sedeLinea = `Sede Regional de Educación Vial ${sedeCiudad}`;
-      const descEquipo = descripcionEquipo(tipo);
+      const maquinariaFrase = tipoMaquinariaFrase(tipo);
+      const maquinariaCorta = nombreMaquinariaCorto(tipo);
 
       let htmlCarta = "";
 
-      if (tipo === "D1") {
-        // 📄 TEXTO ESPECIAL D1 (como la foto)
-        htmlCarta = `
-<b>${fechaCartaLinea}</b><br><br>
-
-Señores<br>
-<b>${sedeLinea}</b><br>
-Departamento Evaluación de Conductores<br>
-Dirección General de Educación Vial<br><br>
-
-Estimados señores:<br><br>
-
-Por este medio quien suscribe <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, dueño de la empresa <b>Acosta Transporte y Maquinaria Pesada</b> con personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, labora actualmente para esta empresa desde el día <b>${fechaInicioTexto}</b>.<br><br>
-
-Certifico que el interesado opera y tiene amplia experiencia en el manejo de <b>chapulín de llantas</b>, por ende doy fe de que el mismo labora actualmente en esta empresa.<br><br>
-
-Se les solicita continuar el trámite para la confección de la licencia de conducir categoría <b>D1</b> ante la Dirección General de Educación Vial del MOPT.<br><br>
-
-Agradezco de antemano la valiosa atención que se sirvan prestar a la presente solicitud.<br><br>
-
-Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, la misma a solicitud del interesado a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del <b>${hoy.getFullYear()}</b>.<br><br>
-
-Atentamente,<br><br>
-___________________________<br>
-<b>Neal Ariel Acosta Castro</b><br>
-Céd.: <b>7-0262-0124</b><br>
-<b>Acosta Transporte y Maquinaria Pesada</b><br>
-Tel.: <b>8977-5801</b>
-        `;
-      } else {
-        // 🌐 TEXTO GENERAL PARA D2 Y D3
+      if (modo === "con") {
+        // =========================
+        // MODO CON RESPONSABILIDAD PATRONAL
+        // =========================
         htmlCarta = `
 <b>${fechaCartaLinea}</b><br><br>
 
@@ -250,11 +266,11 @@ Tel.: <b>8977-5801</b>
 <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
 
 <b>Estimados señores:</b><br>
-Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>Patrón</b> de la empresa <b>Inversiones Acosta Durán del Caribe S.A.</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñando funciones relacionadas con la operación de <b>${descEquipo}</b>.<br><br>
+Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>Patrón</b> de la empresa <b>Inversiones Acosta Durán del Caribe S.A.</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñándose como operador de <b>${maquinariaFrase}</b>.<br><br>
 
-El señor <b>${nombre}</b> ha demostrado responsabilidad, disciplina y capacidad para desempeñar dichas labores de forma segura y competente.<br><br>
+Certifico que el señor <b>${nombre}</b> opera <b>${maquinariaCorta}</b> y cuenta con amplia experiencia en el manejo de dicha maquinaria, ejecutando sus labores de forma responsable, segura y competente.<br><br>
 
-Por lo anterior, solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la licencia tipo <b>${tipo}</b>.<br><br>
+Por lo anterior, solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la licencia tipo <b>${tipo}</b>, para la operación de <b>${maquinariaCorta}</b> indicada en la presente certificación.<br><br>
 
 Agradezco de antemano la atención prestada a esta solicitud.<br><br>
 
@@ -266,8 +282,41 @@ ___________________________<br>
 <b>Patrón</b><br>
 <b>Inversiones Acosta Durán del Caribe S.A.</b><br>
 Cédula: <b>7-0262-0124</b><br>
-Tel.: <b>8977-5801</b>
-        `;
+Tel.: <b>8977-5801</b>`;
+      } else {
+        // =========================
+        // MODO SIN RESPONSABILIDAD PATRONAL
+        // (prácticas operativas supervisadas, sin relación laboral)
+        // =========================
+        htmlCarta = `
+<b>${fechaCartaLinea}</b><br><br>
+
+<b>Señores:</b><br>
+<b>${sedeLinea}</b><br>
+<b>Departamento de Evaluación de Conductores</b><br>
+<b>Dirección General de Educación Vial</b><br>
+<b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
+
+<b>Estimados señores:</b><br>
+Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi calidad de <b>Patrón</b> de la empresa <b>Inversiones Acosta Durán del Caribe S.A.</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${maquinariaFrase}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br><br>
+
+Durante este período, el señor <b>${nombre}</b> ha demostrado responsabilidad, disciplina y habilidades suficientes para desempeñarse de manera segura en las operaciones prácticas del equipo indicado.<br><br>
+
+La presente constancia se emite únicamente para fines de <b>certificación de experiencia operativa</b> ante la Dirección General de Educación Vial, para la tramitación de la licencia tipo <b>${tipo}</b>.<br><br>
+
+<b>Esta certificación es de carácter exclusivamente formativo y no constituye relación laboral, vínculo contractual, subordinación, remuneración, ni genera derechos laborales de ningún tipo para el participante.</b><br><br>
+
+Agradezco de antemano la atención prestada a la presente.<br><br>
+
+Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
+
+Atentamente,<br><br>
+___________________________<br>
+<b>Neal Ariel Acosta Castro</b><br>
+<b>Patrón</b><br>
+<b>Inversiones Acosta Durán del Caribe S.A.</b><br>
+Cédula: <b>7-0262-0124</b><br>
+Tel.: <b>8977-5801</b>`;
       }
 
       document.getElementById("carta").innerHTML = htmlCarta;
