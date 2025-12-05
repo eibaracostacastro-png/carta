@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Carta Licencias D1, D2, D3</title>
+  <title>Carta Licencias D1, D2, D3 - Acosta Transporte y Maquinaria Pesada</title>
   <style>
     body {
       font-family: "Times New Roman", serif;
@@ -57,6 +57,7 @@
       border: 1px solid #333;
       background: #fff;
       margin-right: 5px;
+      margin-top: 5px;
     }
     button:hover {
       background: #f3f3f3;
@@ -92,7 +93,7 @@
         margin: 0;
         padding: 0;
       }
-      .formulario, .acciones, h1 {
+      .formulario, h1 {
         display: none;
       }
       .contenedor {
@@ -106,6 +107,9 @@
         box-shadow: none;
         border-radius: 0;
         max-width: none;
+      }
+      .acciones {
+        display: none;
       }
     }
   </style>
@@ -176,8 +180,14 @@
 
     <div class="acciones">
       <button type="button" onclick="window.print()">Imprimir / Guardar como PDF</button>
+      <button type="button" onclick="abrirVistaLimpia()">Vista limpia para PDF</button>
+      <button type="button" onclick="descargarPDF()">Descargar PDF</button>
+      <button type="button" onclick="descargarWord()">Descargar Word</button>
     </div>
   </div>
+
+  <!-- Librería para generar PDF desde HTML -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
   <script>
     const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
@@ -198,7 +208,6 @@
       return f;
     }
 
-    // Un mes antes, restando de 3 a 5 días, para fecha de inicio
     function generarFechaInicioTrabajo(base) {
       const f = new Date(base);
       f.setMonth(f.getMonth() - 1);
@@ -206,7 +215,6 @@
       return f;
     }
 
-    // Descripción técnica según la licencia
     function tipoMaquinariaFrase(tipo) {
       if (tipo === "D1") {
         return "tractor de llanta, maquinaria especial agrícola autorizada para la licencia tipo D1";
@@ -253,9 +261,7 @@
       let htmlCarta = "";
 
       if (modo === "con") {
-        // =========================
-        // MODO CON RESPONSABILIDAD PATRONAL
-        // =========================
+        // CON RESPONSABILIDAD PATRONAL
         htmlCarta = `
 <b>${fechaCartaLinea}</b><br><br>
 
@@ -266,7 +272,7 @@
 <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
 
 <b>Estimados señores:</b><br>
-Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>Patrón</b> de la empresa <b>Inversiones Acosta Durán del Caribe S.A.</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñándose como operador de <b>${maquinariaFrase}</b>.<br><br>
+Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>Patrón</b> de la empresa <b>Acosta Transporte y Maquinaria Pesada</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñándose como operador de <b>${maquinariaFrase}</b>.<br><br>
 
 Certifico que el señor <b>${nombre}</b> opera <b>${maquinariaCorta}</b> y cuenta con amplia experiencia en el manejo de dicha maquinaria, ejecutando sus labores de forma responsable, segura y competente.<br><br>
 
@@ -280,14 +286,11 @@ Atentamente,<br><br>
 ___________________________<br>
 <b>Neal Ariel Acosta Castro</b><br>
 <b>Patrón</b><br>
-<b>Inversiones Acosta Durán del Caribe S.A.</b><br>
+<b>Acosta Transporte y Maquinaria Pesada</b><br>
 Cédula: <b>7-0262-0124</b><br>
 Tel.: <b>8977-5801</b>`;
       } else {
-        // =========================
-        // MODO SIN RESPONSABILIDAD PATRONAL
-        // (prácticas operativas supervisadas, sin relación laboral)
-        // =========================
+        // SIN RESPONSABILIDAD PATRONAL (PRÁCTICAS)
         htmlCarta = `
 <b>${fechaCartaLinea}</b><br><br>
 
@@ -298,7 +301,7 @@ Tel.: <b>8977-5801</b>`;
 <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
 
 <b>Estimados señores:</b><br>
-Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi calidad de <b>Patrón</b> de la empresa <b>Inversiones Acosta Durán del Caribe S.A.</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${maquinariaFrase}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br><br>
+Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi calidad de <b>Patrón</b> de la empresa <b>Acosta Transporte y Maquinaria Pesada</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${maquinariaFrase}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br><br>
 
 Durante este período, el señor <b>${nombre}</b> ha demostrado responsabilidad, disciplina y habilidades suficientes para desempeñarse de manera segura en las operaciones prácticas del equipo indicado.<br><br>
 
@@ -314,7 +317,7 @@ Atentamente,<br><br>
 ___________________________<br>
 <b>Neal Ariel Acosta Castro</b><br>
 <b>Patrón</b><br>
-<b>Inversiones Acosta Durán del Caribe S.A.</b><br>
+<b>Acosta Transporte y Maquinaria Pesada</b><br>
 Cédula: <b>7-0262-0124</b><br>
 Tel.: <b>8977-5801</b>`;
       }
@@ -328,6 +331,67 @@ Tel.: <b>8977-5801</b>`;
       navigator.clipboard.writeText(carta)
         .then(() => alert("Texto copiado."))
         .catch(() => alert("No se pudo copiar automáticamente, pero podés copiarlo a mano."));
+    }
+
+    function abrirVistaLimpia() {
+      const cartaHTML = document.getElementById("carta").innerHTML;
+      if (!cartaHTML.trim()) return;
+      const win = window.open('', '_blank');
+      win.document.write(`<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Carta lista para PDF</title>
+  <style>
+    body {
+      font-family: "Times New Roman", serif;
+      margin: 40px;
+    }
+  </style>
+</head>
+<body>${cartaHTML}</body>
+</html>`);
+      win.document.close();
+    }
+
+    function descargarPDF() {
+      const carta = document.getElementById("carta");
+      if (!carta.innerText.trim()) return;
+      const opt = {
+        margin:       10,
+        filename:     'Carta_Licencia_D.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(carta).save();
+    }
+
+    function descargarWord() {
+      const cartaHTML = document.getElementById("carta").innerHTML;
+      if (!cartaHTML.trim()) return;
+
+      const contenido = `
+<html xmlns:o='urn:schemas-microsoft-com:office:office'
+      xmlns:w='urn:schemas-microsoft-com:office:word'
+      xmlns='http://www.w3.org/TR/REC-html40'>
+<head><meta charset="UTF-8"><title>Carta</title></head>
+<body style="font-family:'Times New Roman',serif;">
+${cartaHTML}
+</body></html>`;
+
+      const blob = new Blob(['\ufeff', contenido], {
+        type: 'application/msword'
+      });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'Carta_Licencia_D.doc';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     }
 
     window.addEventListener("DOMContentLoaded", generarCarta);
