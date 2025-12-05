@@ -68,10 +68,10 @@
     }
     .carta {
       background: #ffffff;
-      padding: 35px 50px;
+      padding: 25px 40px; /* ↓ antes 35px 50px */
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.15);
-      line-height: 1.15; /* volvemos al valor original */
+      line-height: 1.15;  /* encabezado y firma se quedan igual */
       font-size: 14px;
       white-space: pre-wrap;
       width: 100%;
@@ -79,7 +79,7 @@
     }
     /* interlineado solo para el centro de la carta */
     .carta .cuerpo {
-      line-height: 1.5;
+      line-height: 1.4;  /* ajustado para que quepa en 1 página */
     }
     .acciones {
       margin-top: 10px;
@@ -88,7 +88,7 @@
 
     @page {
       size: A4;
-      margin: 2cm;
+      margin: 1.3cm;  /* ↓ antes 2cm, ganamos altura útil */
     }
 
     @media print {
@@ -353,8 +353,8 @@ Tel.: <b>8977-5801</b>`;
   <style>
     body {
       font-family: "Times New Roman", serif;
-      margin: 40px;
-      line-height: 1.5;
+      margin: 25px;
+      line-height: 1.4;
     }
   </style>
 </head>
@@ -385,7 +385,7 @@ Tel.: <b>8977-5801</b>`;
       xmlns:w='urn:schemas-microsoft-com:office:word'
       xmlns='http://www.w3.org/TR/REC-html40'>
 <head><meta charset="UTF-8"><title>Carta</title></head>
-<body style="font-family:'Times New Roman',serif; line-height:1.5;">
+<body style="font-family:'Times New Roman',serif; line-height:1.4;">
 ${cartaHTML}
 </body></html>`;
 
@@ -407,3 +407,5 @@ ${cartaHTML}
   </script>
 </body>
 </html>
+
+
