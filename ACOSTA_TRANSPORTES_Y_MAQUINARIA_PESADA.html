@@ -68,14 +68,15 @@
     }
     .carta {
       background: #ffffff;
-      padding: 35px 50px;
+      padding: 25px 35px;      /* un poco menos de padding lateral */
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.15);
-      line-height: 1.15;   /* VALOR ORIGINAL, CABE EN 1 PÁGINA */
+      line-height: 1.15;
       font-size: 14px;
       white-space: pre-wrap;
       width: 100%;
-      max-width: 700px;
+      max-width: 550px;        /* ANCHO REDUCIDO PARA QUE ENTRE EN EL PDF */
+      margin: 0 auto;
     }
     .acciones {
       margin-top: 10px;
@@ -84,7 +85,7 @@
 
     @page {
       size: A4;
-      margin: 2cm;   /* margen estándar, como tus otras cartas */
+      margin: 2cm;
     }
 
     @media print {
@@ -186,27 +187,24 @@
     </div>
   </div>
 
-  <!-- Librería para generar PDF desde HTML -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
   <script>
     const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
     const DIAS = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
 
-    // 👉 Fecha de arriba: "lunes 10 de noviembre de 2025"
     function formatearFecha(fecha) {
       return `${DIAS[fecha.getDay()]} ${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
     }
 
-    // 👉 Fecha de inicio trabajo (ya la usábamos con día)
     function formatearFechaConDia(fecha) {
       return `${DIAS[fecha.getDay()]} ${fecha.getDate()} de ${MESES[fecha.getMonth()]} del ${fecha.getFullYear()}`;
     }
 
     function ajustarFechaHabil(fecha) {
       const f = new Date(fecha);
-      if (f.getDay() === 6) f.setDate(f.getDate() - 1); // sábado -> viernes
-      if (f.getDay() === 0) f.setDate(f.getDate() - 2); // domingo -> viernes
+      if (f.getDay() === 6) f.setDate(f.getDate() - 1);
+      if (f.getDay() === 0) f.setDate(f.getDate() - 2);
       return f;
     }
 
@@ -236,7 +234,7 @@
     function obtenerModoResponsabilidad() {
       const radios = document.getElementsByName("modoResp");
       for (const r of radios) {
-        if (r.checked) return r.value; // "con" o "sin"
+        if (r.checked) return r.value;
       }
       return "con";
     }
@@ -254,7 +252,7 @@
       const hoy = ajustarFechaHabil(new Date());
       const fechaInicio = generarFechaInicioTrabajo(hoy);
 
-      const fechaCartaLinea = formatearFecha(hoy);              // ahora con día
+      const fechaCartaLinea = formatearFecha(hoy);
       const fechaInicioTexto = formatearFechaConDia(fechaInicio);
       const sedeLinea = `Sede Regional de Educación Vial ${sedeCiudad}`;
       const maquinariaFrase = tipoMaquinariaFrase(tipo);
@@ -263,7 +261,6 @@
       let htmlCarta = "";
 
       if (modo === "con") {
-        // CON RESPONSABILIDAD PATRONAL
         htmlCarta = `
 <b>${fechaCartaLinea}</b><br><br>
 
@@ -292,7 +289,6 @@ ___________________________<br>
 Cédula: <b>7-0262-0124</b><br>
 Tel.: <b>8977-5801</b>`;
       } else {
-        // SIN RESPONSABILIDAD PATRONAL (PRÁCTICAS)
         htmlCarta = `
 <b>${fechaCartaLinea}</b><br><br>
 
