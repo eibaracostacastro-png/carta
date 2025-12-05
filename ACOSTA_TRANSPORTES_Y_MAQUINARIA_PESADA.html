@@ -68,7 +68,7 @@
     }
     .carta {
       background: #ffffff;
-      padding: 25px 40px; /* más compacta para que quepa en 1 página */
+      padding: 25px 40px; /* compacta para que quepa en 1 página */
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.15);
       line-height: 1.15;
@@ -77,7 +77,7 @@
       width: 100%;
       max-width: 700px;
     }
-    /* interlineado solo en el texto central */
+    /* interlineado solo para el cuerpo */
     .carta .cuerpo {
       line-height: 1.4;
     }
@@ -88,7 +88,7 @@
 
     @page {
       size: A4;
-      margin: 1.3cm; /* margen más pequeño para aprovechar altura */
+      margin: 1.3cm;
     }
 
     @media print {
@@ -198,7 +198,7 @@
     const DIAS = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
 
     function formatearFecha(fecha) {
-      return `${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
+      return `${DIAS[fecha.getDay()]} ${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
     }
 
     function formatearFechaConDia(fecha) {
@@ -256,7 +256,7 @@
       const hoy = ajustarFechaHabil(new Date());
       const fechaInicio = generarFechaInicioTrabajo(hoy);
 
-      const fechaCartaLinea = formatearFecha(hoy);
+      const fechaCartaLinea = formatearFecha(hoy);            // arriba con día
       const fechaInicioTexto = formatearFechaConDia(fechaInicio);
       const sedeLinea = `Sede Regional de Educación Vial ${sedeCiudad}`;
       const maquinariaFrase = tipoMaquinariaFrase(tipo);
@@ -407,6 +407,3 @@ ${cartaHTML}
   </script>
 </body>
 </html>
-
-
-
