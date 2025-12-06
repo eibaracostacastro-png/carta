@@ -68,15 +68,16 @@
     }
     .carta {
       background: #ffffff;
-      padding: 25px 35px;      /* ancho cómodo para html2pdf */
+      padding: 15px 30px;      /* menos padding */
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.15);
-      line-height: 1.15;
-      font-size: 14px;
+      line-height: 1.1;        /* más cerradito */
+      font-size: 13px;         /* un toque más pequeño */
       white-space: pre-wrap;
       width: 100%;
       max-width: 550px;
       margin: 0 auto;
+      page-break-inside: avoid;
     }
     .acciones {
       margin-top: 10px;
@@ -108,6 +109,8 @@
         box-shadow: none;
         border-radius: 0;
         max-width: none;
+        font-size: 13px;
+        line-height: 1.1;
       }
       .acciones {
         display: none;
@@ -191,7 +194,7 @@
 
   <script>
     const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-    const DIAS = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+    const DIAS  = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
 
     function formatearFecha(fecha) {
       return `${DIAS[fecha.getDay()]} ${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
@@ -241,20 +244,20 @@
 
     function generarCarta() {
       const sedeCiudad = document.getElementById("sedeCiudad").value.trim() || "Guápiles";
-      const nombre = document.getElementById("nombreTrabajador").value.trim() || "_____________________________";
-      const cedula = document.getElementById("cedulaTrabajador").value.trim() || "___________";
-      const vecino = document.getElementById("vecino").value.trim() || "_______________________";
-      const correo = document.getElementById("correo").value.trim() || "_______________________";
-      const telefono = document.getElementById("telefono").value.trim() || "___________";
-      const tipo = document.getElementById("tipoLicencia").value;
-      const modo = obtenerModoResponsabilidad();
+      const nombre     = document.getElementById("nombreTrabajador").value.trim()   || "_____________________________";
+      const cedula     = document.getElementById("cedulaTrabajador").value.trim()   || "___________";
+      const vecino     = document.getElementById("vecino").value.trim()             || "_______________________";
+      const correo     = document.getElementById("correo").value.trim()             || "_______________________";
+      const telefono   = document.getElementById("telefono").value.trim()           || "___________";
+      const tipo       = document.getElementById("tipoLicencia").value;
+      const modo       = obtenerModoResponsabilidad();
 
-      const hoy = ajustarFechaHabil(new Date());
-      const fechaInicio = generarFechaInicioTrabajo(hoy);
+      const hoy        = ajustarFechaHabil(new Date());
+      const fechaInicio= generarFechaInicioTrabajo(hoy);
 
       const fechaCartaLinea = formatearFecha(hoy);
-      const fechaInicioTexto = formatearFechaConDia(fechaInicio);
-      const sedeLinea = `Sede Regional de Educación Vial ${sedeCiudad}`;
+      const fechaInicioTexto= formatearFechaConDia(fechaInicio);
+      const sedeLinea       = `Sede Regional de Educación Vial ${sedeCiudad}`;
       const maquinariaFrase = tipoMaquinariaFrase(tipo);
       const maquinariaCorta = nombreMaquinariaCorto(tipo);
 
@@ -279,8 +282,8 @@ Por lo anterior, solicito de la manera más atenta continuar con el trámite cor
 
 Agradezco de antemano la atención prestada a esta solicitud.<br><br>
 
-Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br>
-<br>
+Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
+
 Atentamente,<br><br>
 ___________________________<br>
 <b>Neal Ariel Acosta Castro</b><br>
@@ -309,8 +312,8 @@ La presente constancia se emite únicamente para fines de <b>certificación de e
 
 Agradezco de antemano la atención prestada a la presente.<br><br>
 
-Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br>
-<br>
+Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
+
 Atentamente,<br><br>
 ___________________________<br>
 <b>Neal Ariel Acosta Castro</b><br>
@@ -344,6 +347,8 @@ Tel.: <b>8977-5801</b>`;
     body {
       font-family: "Times New Roman", serif;
       margin: 40px;
+      font-size: 13px;
+      line-height: 1.1;
     }
   </style>
 </head>
@@ -356,11 +361,12 @@ Tel.: <b>8977-5801</b>`;
       const carta = document.getElementById("carta");
       if (!carta.innerText.trim()) return;
       const opt = {
-        margin: 10,
+        margin: 5,
         filename: 'Carta_Licencia_D.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all'] }   // 👉 forzar UNA sola página
       };
       html2pdf().set(opt).from(carta).save();
     }
@@ -374,7 +380,7 @@ Tel.: <b>8977-5801</b>`;
       xmlns:w='urn:schemas-microsoft-com:office:word'
       xmlns='http://www.w3.org/TR/REC-html40'>
 <head><meta charset="UTF-8"><title>Carta</title></head>
-<body style="font-family:'Times New Roman',serif;">
+<body style="font-family:'Times New Roman',serif;font-size:13px;line-height:1.1;">
 ${cartaHTML}
 </body></html>`;
 
@@ -382,7 +388,7 @@ ${cartaHTML}
         type: 'application/msword'
       });
 
-      const url = URL.createObjectURL(blob);
+      const url  = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = 'Carta_Licencia_D.doc';
