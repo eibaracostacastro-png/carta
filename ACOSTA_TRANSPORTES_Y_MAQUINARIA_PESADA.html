@@ -186,13 +186,6 @@
       text-align:right;
     }
 
-    /* Saltos de página (PDF multipágina) */
-    .page-break{
-      page-break-before:always;
-      break-before:page;
-      height:1px;
-    }
-
     @page{
       size:A4;
       margin:2cm;
@@ -210,7 +203,6 @@
       }
       /* Si querés que el fondo NO salga impreso, dejalo así: */
       .carta.fondo::before{display:none;}
-      /* Watermark sí se imprime (si querés quitarlo, poné display:none aquí) */
     }
   </style>
 </head>
@@ -266,6 +258,7 @@
             <option value="todo" selected>Fondo + Watermark + QR + Sello</option>
             <option value="sobrio">Sin fondo (solo watermark + QR + sello)</option>
             <option value="minimo">Solo QR (sin watermark/sello/fondo)</option>
+            <option value="limpio">Limpia (sin fondo / sin QR / sin watermark / sin sello)</option>
           </select>
         </div>
       </div>
@@ -348,14 +341,18 @@
     function aplicarModoVisual(){
       const modo = document.getElementById("mostrarOpciones").value;
       const carta = document.getElementById("carta");
-      // reset
+
+      // Reset total
       carta.classList.remove("fondo","watermark");
+
       if (modo === "todo"){
         carta.classList.add("fondo","watermark");
       } else if (modo === "sobrio"){
         carta.classList.add("watermark");
       } else if (modo === "minimo"){
         // sin fondo, sin watermark
+      } else if (modo === "limpio"){
+        // totalmente limpio
       }
     }
 
@@ -395,6 +392,17 @@
       `;
     }
 
+    function buildSoloQR(){
+      return `
+        <div class="meta">
+          <div class="qr-box">
+            <div id="qr"></div>
+            <div class="mini">Verificación rápida</div>
+          </div>
+        </div>
+      `;
+    }
+
     function generarCarta(){
       aplicarModoVisual();
 
@@ -416,10 +424,15 @@
       const maquinariaFrase = tipoMaquinariaFrase(tipo);
       const maquinariaCorta = nombreMaquinariaCorto(tipo);
 
-      // Watermark dinámico
-      document.getElementById("carta").setAttribute("data-watermark", EMPRESA_NOMBRE.toUpperCase());
+      const modoVisual = document.getElementById("mostrarOpciones").value;
 
-      // QR data (texto)
+      // Watermark SOLO si no es limpio
+      if (modoVisual === "limpio"){
+        document.getElementById("carta").setAttribute("data-watermark", "");
+      } else {
+        document.getElementById("carta").setAttribute("data-watermark", EMPRESA_NOMBRE.toUpperCase());
+      }
+
       const qrText =
 `EMPRESA: ${EMPRESA_NOMBRE}
 PATRONO: ${PATRONO_NOMBRE} - ${PATRONO_CEDULA}
@@ -493,9 +506,15 @@ CONTACTO: ${EMPRESA_TEL}`;
         `;
       }
 
-      const modoVisual = document.getElementById("mostrarOpciones").value;
-      const incluirTodo = (modoVisual !== "minimo");
-      const meta = incluirTodo ? buildMetaQRySello(qrText, hoy, tipo) : `<div class="meta"><div class="qr-box"><div id="qr"></div><div class="mini">Verificación rápida</div></div></div>`;
+      // Meta según modo:
+      let meta = "";
+      if (modoVisual === "todo" || modoVisual === "sobrio") {
+        meta = buildMetaQRySello(qrText, hoy, tipo);
+      } else if (modoVisual === "minimo") {
+        meta = buildSoloQR();
+      } else if (modoVisual === "limpio") {
+        meta = ""; // NADA
+      }
 
       const htmlFinal = `
         ${buildEncabezado()}
@@ -505,15 +524,17 @@ CONTACTO: ${EMPRESA_TEL}`;
 
       document.getElementById("cartaContenido").innerHTML = htmlFinal;
 
-      // Render QR
+      // Render QR SOLO si existe el contenedor #qr (minimo/todo/sobrio)
       const qrDiv = document.getElementById("qr");
-      qrDiv.innerHTML = "";
-      new QRCode(qrDiv, {
-        text: qrText,
-        width: 100,
-        height: 100,
-        correctLevel: QRCode.CorrectLevel.M
-      });
+      if (qrDiv) {
+        qrDiv.innerHTML = "";
+        new QRCode(qrDiv, {
+          text: qrText,
+          width: 100,
+          height: 100,
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
     }
 
     function copiarTexto(){
@@ -531,27 +552,8 @@ CONTACTO: ${EMPRESA_TEL}`;
         <meta charset="UTF-8"><title>Carta - Vista limpia</title>
         <style>
           body{font-family:"Times New Roman",serif;margin:40px;font-size:13px;line-height:1.15;}
-          .carta{position:relative;}
-          .encabezado{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:10px;padding-bottom:10px;border-bottom:2px solid #C9A227;}
-          .logo{width:160px;max-height:90px;object-fit:contain;}
-          .empresa{text-align:right;font-size:12px;line-height:1.15;}
-          .empresa b{font-size:13px;}
-          .meta{display:flex;justify-content:space-between;gap:14px;margin:10px 0 8px 0;}
-          .qr-box{width:120px;border:1px solid rgba(0,0,0,.15);border-radius:10px;padding:8px;text-align:center;}
-          #qr{width:100px;height:100px;margin:0 auto;}
-          .mini{font-size:10px;line-height:1.1;margin-top:6px;}
-          .sello{flex:1;border:1px dashed rgba(0,0,0,.25);border-radius:12px;padding:10px 12px;}
-          .titulo{font-weight:700;letter-spacing:.6px;font-size:12px;text-transform:uppercase;margin-bottom:6px;}
-          .texto{font-size:11px;line-height:1.15;}
         </style>
-      </head><body>${cartaHTML}
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
-      <script>
-        // Re-render QR en ventana nueva
-        const mainQr = window.opener?.document?.querySelector("#qr img")?.getAttribute("src");
-        // Si el QR ya existe como img, lo copiamos; si no, no pasa nada.
-      <\/script>
-      </body></html>`);
+      </head><body>${cartaHTML}</body></html>`);
       win.document.close();
     }
 
@@ -563,7 +565,7 @@ CONTACTO: ${EMPRESA_TEL}`;
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        pagebreak: { mode: ["css", "legacy"] } // ✅ multipágina real
+        pagebreak: { mode: ["css", "legacy"] }
       };
       html2pdf().set(opt).from(carta).save();
     }
@@ -589,7 +591,6 @@ ${cartaHTML}
       URL.revokeObjectURL(url);
     }
 
-    // Auto actualizar
     document.addEventListener("DOMContentLoaded", () => {
       ["sedeCiudad","nombreTrabajador","cedulaTrabajador","vecino","correo","telefono","tipoLicencia","mostrarOpciones"]
         .forEach(id => document.getElementById(id).addEventListener("input", generarCarta));
