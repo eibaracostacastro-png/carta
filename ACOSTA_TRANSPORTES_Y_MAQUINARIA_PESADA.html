@@ -201,7 +201,7 @@
         box-shadow:none;
         padding:0;
       }
-      /* Si querés que el fondo NO salga impreso, dejalo así: */
+      /* Si querés que el fondo NO salga impreso */
       .carta.fondo::before{display:none;}
     }
   </style>
@@ -297,12 +297,13 @@
     const DIAS  = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
 
     // === Datos fijos ===
-    const PATRONO_NOMBRE = "Neal Ariel Acosta Castro";
-    const PATRONO_CEDULA = "702620124"; // ✅ cédula física
-    const EMPRESA_NOMBRE = "Acosta Transporte y Maquinaria Pesada A&D";
-    const EMPRESA_LUGAR  = "Guápiles, Pococí, Limón";
-    const EMPRESA_TEL    = "8977-5801";
-    const LOGO_SRC       = "logoA&D.jpg"; // ✅ tu logo
+    const JEFE_NOMBRE   = "Neal Ariel Acosta Castro";
+    const JEFE_CEDULA   = "702620124"; // ✅ cédula física
+    const EMPRESA_NOMBRE= "Acosta Transporte y Maquinaria Pesada A&D";
+    const EMPRESA_LUGAR = "Guápiles, Pococí, Limón";
+    const EMPRESA_TEL   = "8977-5801";
+    const LOGO_SRC      = "logoA&D.jpg"; // ✅ tu logo
+    const CARGO_TITULO  = "Jefe"; // ✅ cambio solicitado
 
     function formatearFecha(fecha){
       return `${DIAS[fecha.getDay()]} ${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
@@ -342,7 +343,6 @@
       const modo = document.getElementById("mostrarOpciones").value;
       const carta = document.getElementById("carta");
 
-      // Reset total
       carta.classList.remove("fondo","watermark");
 
       if (modo === "todo"){
@@ -362,7 +362,7 @@
           <img class="logo" src="${LOGO_SRC}" alt="Logo" onerror="this.style.display='none'">
           <div class="empresa">
             <b>${EMPRESA_NOMBRE}</b><br>
-            Cédula física: <b>${PATRONO_CEDULA}</b><br>
+            Cédula física: <b>${JEFE_CEDULA}</b><br>
             Tel.: <b>${EMPRESA_TEL}</b>
           </div>
         </div>
@@ -384,7 +384,7 @@
             <div class="titulo">Sello Digital / Constancia</div>
             <div class="texto">
               Documento emitido por <b>${EMPRESA_NOMBRE}</b> a solicitud del interesado, para trámite ante Educación Vial (MOPT).<br>
-              Firmante: <b>${PATRONO_NOMBRE}</b> · Cédula: <b>${PATRONO_CEDULA}</b>.<br>
+              Firmante: <b>${JEFE_NOMBRE}</b> · Cédula: <b>${JEFE_CEDULA}</b>.<br>
               Código/QR contiene los datos básicos de esta certificación.
             </div>
           </div>
@@ -433,9 +433,10 @@
         document.getElementById("carta").setAttribute("data-watermark", EMPRESA_NOMBRE.toUpperCase());
       }
 
+      // QR data (texto)
       const qrText =
 `EMPRESA: ${EMPRESA_NOMBRE}
-PATRONO: ${PATRONO_NOMBRE} - ${PATRONO_CEDULA}
+JEFE: ${JEFE_NOMBRE} - ${JEFE_CEDULA}
 TRABAJADOR/PART.: ${nombre} - ${cedula}
 LICENCIA: ${tipo} (${maquinariaCorta})
 SEDE: ${sedeCiudad}
@@ -455,7 +456,7 @@ CONTACTO: ${EMPRESA_TEL}`;
           <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
 
           <b>Estimados señores:</b><br>
-          Por medio de la presente, yo, <b>${PATRONO_NOMBRE}</b>, cédula de identidad <b>${PATRONO_CEDULA}</b>, en mi condición de <b>Patrón</b> de <b>${EMPRESA_NOMBRE}</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñándose como operador de <b>${maquinariaFrase}</b>.<br><br>
+          Por medio de la presente, yo, <b>${JEFE_NOMBRE}</b>, cédula de identidad <b>${JEFE_CEDULA}</b>, en mi condición de <b>${CARGO_TITULO}</b> de <b>${EMPRESA_NOMBRE}</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñándose como operador de <b>${maquinariaFrase}</b>.<br><br>
 
           Certifico que el señor <b>${nombre}</b> opera <b>${maquinariaCorta}</b> y cuenta con experiencia en el manejo de dicha maquinaria, ejecutando sus labores de forma responsable, segura y competente.<br><br>
 
@@ -467,10 +468,10 @@ CONTACTO: ${EMPRESA_TEL}`;
 
           Atentamente,<br><br>
           ___________________________<br>
-          <b>${PATRONO_NOMBRE}</b><br>
-          <b>Patrón</b><br>
+          <b>${JEFE_NOMBRE}</b><br>
+          <b>${CARGO_TITULO}</b><br>
           <b>${EMPRESA_NOMBRE}</b><br>
-          Cédula: <b>${PATRONO_CEDULA}</b><br>
+          Cédula: <b>${JEFE_CEDULA}</b><br>
           Tel.: <b>${EMPRESA_TEL}</b>
         `;
       } else {
@@ -484,7 +485,7 @@ CONTACTO: ${EMPRESA_TEL}`;
           <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
 
           <b>Estimados señores:</b><br>
-          Por medio de la presente, yo, <b>${PATRONO_NOMBRE}</b>, cédula de identidad <b>${PATRONO_CEDULA}</b>, en mi calidad de <b>Patrón</b> de <b>${EMPRESA_NOMBRE}</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${maquinariaFrase}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br><br>
+          Por medio de la presente, yo, <b>${JEFE_NOMBRE}</b>, cédula de identidad <b>${JEFE_CEDULA}</b>, en mi calidad de <b>${CARGO_TITULO}</b> de <b>${EMPRESA_NOMBRE}</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${maquinariaFrase}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br><br>
 
           Durante este período, el señor <b>${nombre}</b> ha demostrado responsabilidad, disciplina y habilidades suficientes para desempeñarse de manera segura en las operaciones prácticas del equipo indicado.<br><br>
 
@@ -498,10 +499,10 @@ CONTACTO: ${EMPRESA_TEL}`;
 
           Atentamente,<br><br>
           ___________________________<br>
-          <b>${PATRONO_NOMBRE}</b><br>
-          <b>Patrón</b><br>
+          <b>${JEFE_NOMBRE}</b><br>
+          <b>${CARGO_TITULO}</b><br>
           <b>${EMPRESA_NOMBRE}</b><br>
-          Cédula: <b>${PATRONO_CEDULA}</b><br>
+          Cédula: <b>${JEFE_CEDULA}</b><br>
           Tel.: <b>${EMPRESA_TEL}</b>
         `;
       }
@@ -513,7 +514,7 @@ CONTACTO: ${EMPRESA_TEL}`;
       } else if (modoVisual === "minimo") {
         meta = buildSoloQR();
       } else if (modoVisual === "limpio") {
-        meta = ""; // NADA
+        meta = "";
       }
 
       const htmlFinal = `
@@ -524,7 +525,7 @@ CONTACTO: ${EMPRESA_TEL}`;
 
       document.getElementById("cartaContenido").innerHTML = htmlFinal;
 
-      // Render QR SOLO si existe el contenedor #qr (minimo/todo/sobrio)
+      // Render QR SOLO si existe el contenedor #qr
       const qrDiv = document.getElementById("qr");
       if (qrDiv) {
         qrDiv.innerHTML = "";
