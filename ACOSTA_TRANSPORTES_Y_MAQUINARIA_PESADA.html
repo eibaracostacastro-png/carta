@@ -73,11 +73,16 @@
       box-shadow:0 0 10px rgba(0,0,0,.13);
       padding:26px 38px;
 
-      /* ✅ MÁS FORMAL: aire + interlineado */
       font-size:13.5px;
       line-height:1.35;
 
       overflow:hidden;
+    }
+
+    /* ✅ Súper formal (toggle) */
+    .carta.super-formal{
+      font-size:14.5px;
+      line-height:1.6;
     }
 
     /* ===== Fondo elegante (opcional) ===== */
@@ -114,28 +119,21 @@
       z-index:1;
     }
 
-    /* ===== Encabezado pro ===== */
+    /* ===== Encabezado (solo logo) ===== */
     .encabezado{
       display:flex;
-      justify-content:space-between;
       align-items:center;
-      gap:14px;
+      justify-content:flex-start; /* logo a la izquierda */
       margin-bottom:12px;
       padding-bottom:10px;
       border-bottom:2px solid var(--oro);
     }
     .logo{
-      width:170px;
+      width:180px;
       max-height:95px;
       object-fit:contain;
       display:block;
     }
-    .empresa{
-      text-align:right;
-      font-size:12.5px;
-      line-height:1.25;
-    }
-    .empresa b{font-size:13.5px;}
 
     /* ===== Bloque QR + sello ===== */
     .meta{
@@ -185,7 +183,6 @@
       text-align:right;
     }
 
-    /* ✅ imprimir: más “aire” y que llene hoja */
     @page{
       size:A4;
       margin:1.8cm;
@@ -200,11 +197,14 @@
         max-width:none;
         border-radius:0;
         box-shadow:none;
-
-        /* ✅ aquí es donde se ve formal */
         padding:0;
         font-size:14px;
         line-height:1.45;
+      }
+
+      .carta.super-formal{
+        font-size:14.8px;
+        line-height:1.6;
       }
 
       .encabezado{
@@ -212,7 +212,6 @@
         padding-bottom:10px;
       }
 
-      /* Si querés que el fondo NO salga impreso */
       .carta.fondo::before{display:none;}
     }
   </style>
@@ -284,6 +283,7 @@
       <button type="button" onclick="copiarTexto()">Copiar texto plano</button>
       <button type="button" onclick="descargarPDF()">Descargar PDF (multipágina)</button>
       <button type="button" onclick="descargarWord()">Descargar Word</button>
+      <button type="button" id="btnSuperFormal" onclick="toggleSuperFormal()">Súper formal (interlineado 1.6)</button>
     </div>
 
     <div class="carta-wrapper">
@@ -347,6 +347,17 @@
       return "con";
     }
 
+    function toggleSuperFormal(){
+      const carta = document.getElementById("carta");
+      carta.classList.toggle("super-formal");
+
+      const btn = document.getElementById("btnSuperFormal");
+      const activo = carta.classList.contains("super-formal");
+      btn.textContent = activo ? "Normal (interlineado estándar)" : "Súper formal (interlineado 1.6)";
+
+      generarCarta();
+    }
+
     function aplicarModoVisual(){
       const modo = document.getElementById("mostrarOpciones").value;
       const carta = document.getElementById("carta");
@@ -364,15 +375,11 @@
       }
     }
 
+    // ✅ Encabezado SOLO logo
     function buildEncabezado(){
       return `
         <div class="encabezado">
           <img class="logo" src="${LOGO_SRC}" alt="Logo" onerror="this.style.display='none'">
-          <div class="empresa">
-            <b>${EMPRESA_NOMBRE}</b><br>
-            Cédula física: <b>${JEFE_CEDULA}</b><br>
-            Tel.: <b>${EMPRESA_TEL}</b>
-          </div>
         </div>
       `;
     }
