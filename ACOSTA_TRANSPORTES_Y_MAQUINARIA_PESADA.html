@@ -1,259 +1,414 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Carta Licencias D1, D2, D3 - Acosta Transporte y Maquinaria Pesada</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Carta Licencias D1, D2, D3 - Acosta Transporte y Maquinaria Pesada A&D</title>
+
   <style>
-    body {
-      font-family: "Times New Roman", serif;
-      background: #f2f2f2;
-      margin: 0;
-      padding: 20px;
-    }
-    .contenedor {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .formulario {
-      background: #ffffff;
-      padding: 15px 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      margin-bottom: 15px;
-      font-size: 14px;
-    }
-    .form-group {
-      margin-bottom: 8px;
-    }
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 3px;
-    }
-    input, select {
-      width: 100%;
-      padding: 5px 8px;
-      font-size: 14px;
-      box-sizing: border-box;
-    }
-    .radio-inline {
-      display: inline-block;
-      margin-right: 15px;
-      font-weight: normal;
-    }
-    .radio-inline input {
-      width: auto;
-      margin-right: 5px;
-    }
-    button {
-      padding: 8px 15px;
-      font-size: 14px;
-      cursor: pointer;
-      border-radius: 4px;
-      border: 1px solid #333;
-      background: #fff;
-      margin-right: 5px;
-      margin-top: 5px;
-    }
-    button:hover {
-      background: #f3f3f3;
-    }
-    .carta-wrapper {
-      display: flex;
-      justify-content: center;
-    }
-    .carta {
-      background: #ffffff;
-      padding: 15px 30px;      /* menos padding */
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.15);
-      line-height: 1.1;        /* más cerradito */
-      font-size: 13px;         /* un toque más pequeño */
-      white-space: pre-wrap;
-      width: 100%;
-      max-width: 550px;
-      margin: 0 auto;
-      page-break-inside: avoid;
-    }
-    .acciones {
-      margin-top: 10px;
-      text-align: right;
+    :root{
+      --oro:#C9A227;
+      --gris:#f2f2f2;
     }
 
-    @page {
-      size: A4;
-      margin: 2cm;
+    body{
+      font-family:"Times New Roman",serif;
+      background: var(--gris);
+      margin:0;
+      padding:20px;
+    }
+    .contenedor{max-width:980px;margin:0 auto;}
+    h1{text-align:center;margin:0 0 12px 0;}
+
+    .formulario{
+      background:#fff;
+      padding:14px 18px;
+      border-radius:10px;
+      box-shadow:0 0 6px rgba(0,0,0,.10);
+      margin-bottom:14px;
+      font-size:14px;
+    }
+    .form-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px 12px;
+    }
+    .form-group{margin:0;}
+    label{display:block;font-weight:bold;margin-bottom:4px;}
+    input,select{
+      width:100%;
+      padding:6px 9px;
+      font-size:14px;
+      box-sizing:border-box;
+    }
+    .radios{
+      margin-top:8px;
+      display:flex;
+      gap:18px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .radios label{font-weight:normal;margin:0;}
+    .radios input{width:auto;margin-right:6px;}
+
+    button{
+      padding:8px 14px;
+      font-size:14px;
+      cursor:pointer;
+      border-radius:8px;
+      border:1px solid #333;
+      background:#fff;
+      margin-right:6px;
+      margin-top:10px;
+    }
+    button:hover{background:#f6f6f6;}
+
+    .carta-wrapper{display:flex;justify-content:center;}
+    .carta{
+      position:relative;
+      width:100%;
+      max-width:720px;
+      background:#fff;
+      border-radius:12px;
+      box-shadow:0 0 10px rgba(0,0,0,.13);
+      padding:22px 34px;
+      font-size:13px;
+      line-height:1.15;
+      overflow:hidden;
     }
 
-    @media print {
-      body {
-        background: #ffffff;
-        margin: 0;
-        padding: 0;
+    /* ===== Fondo elegante (opcional) ===== */
+    .carta.fondo::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(201,162,39,0.10), transparent 35%),
+        radial-gradient(circle at 80% 30%, rgba(0,60,255,0.05), transparent 35%),
+        linear-gradient(180deg, rgba(0,0,0,0.02), transparent 55%);
+      pointer-events:none;
+      z-index:0;
+    }
+
+    /* ===== Watermark suave ===== */
+    .carta.watermark::after{
+      content:attr(data-watermark);
+      position:absolute;
+      left:50%;
+      top:55%;
+      transform:translate(-50%,-50%) rotate(-18deg);
+      font-size:54px;
+      font-weight:700;
+      letter-spacing:2px;
+      color:rgba(0,0,0,0.05);
+      white-space:nowrap;
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .contenido{
+      position:relative;
+      z-index:1;
+    }
+
+    /* ===== Encabezado pro ===== */
+    .encabezado{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      margin-bottom:10px;
+      padding-bottom:10px;
+      border-bottom:2px solid var(--oro); /* línea dorada */
+    }
+    .logo{
+      width:160px;
+      max-height:90px;
+      object-fit:contain;
+      display:block;
+    }
+    .empresa{
+      text-align:right;
+      font-size:12px;
+      line-height:1.15;
+    }
+    .empresa b{font-size:13px;}
+
+    /* ===== Bloque QR + sello ===== */
+    .meta{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+      margin:10px 0 8px 0;
+    }
+    .qr-box{
+      width:120px;
+      border:1px solid rgba(0,0,0,.15);
+      border-radius:10px;
+      padding:8px;
+      text-align:center;
+      background:rgba(255,255,255,0.75);
+    }
+    #qr{
+      width:100px;height:100px;
+      margin:0 auto;
+    }
+    .qr-box .mini{
+      font-size:10px;
+      line-height:1.1;
+      margin-top:6px;
+      color:#333;
+    }
+
+    .sello{
+      flex:1;
+      border:1px dashed rgba(0,0,0,.25);
+      border-radius:12px;
+      padding:10px 12px;
+      background:rgba(255,255,255,0.70);
+    }
+    .sello .titulo{
+      font-weight:700;
+      color:#000;
+      letter-spacing:.6px;
+      font-size:12px;
+      text-transform:uppercase;
+      margin-bottom:6px;
+    }
+    .sello .texto{
+      font-size:11px;
+      line-height:1.15;
+    }
+
+    .acciones{
+      margin-top:10px;
+      text-align:right;
+    }
+
+    /* Saltos de página (PDF multipágina) */
+    .page-break{
+      page-break-before:always;
+      break-before:page;
+      height:1px;
+    }
+
+    @page{
+      size:A4;
+      margin:2cm;
+    }
+
+    @media print{
+      body{background:#fff;margin:0;padding:0;}
+      .formulario,h1,.acciones{display:none;}
+      .contenedor{max-width:none;margin:0;padding:0;}
+      .carta{
+        max-width:none;
+        border-radius:0;
+        box-shadow:none;
+        padding:0;
       }
-      .formulario, h1 {
-        display: none;
-      }
-      .contenedor {
-        margin: 0;
-        padding: 0;
-        max-width: none;
-      }
-      .carta-wrapper, .carta {
-        margin: 0;
-        padding: 0;
-        box-shadow: none;
-        border-radius: 0;
-        max-width: none;
-        font-size: 13px;
-        line-height: 1.1;
-      }
-      .acciones {
-        display: none;
-      }
+      /* Si querés que el fondo NO salga impreso, dejalo así: */
+      .carta.fondo::before{display:none;}
+      /* Watermark sí se imprime (si querés quitarlo, poné display:none aquí) */
     }
   </style>
 </head>
+
 <body>
   <div class="contenedor">
     <h1>Cartas para licencias D1 · D2 · D3</h1>
 
     <div class="formulario">
-      <div class="form-group">
-        <label for="sedeCiudad">Ciudad de la sede regional:</label>
-        <input type="text" id="sedeCiudad" placeholder="Ej.: Guápiles, Limón, Alajuela">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="sedeCiudad">Ciudad de la sede regional:</label>
+          <input type="text" id="sedeCiudad" placeholder="Ej.: Guápiles, Limón, Alajuela">
+        </div>
+
+        <div class="form-group">
+          <label for="tipoLicencia">Tipo de licencia a solicitar:</label>
+          <select id="tipoLicencia">
+            <option value="D1">D1 - Tractor de llanta</option>
+            <option value="D2">D2 - Tractor de oruga</option>
+            <option value="D3" selected>D3 - Montacargas / equipo especial</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="nombreTrabajador">Nombre completo del trabajador / participante:</label>
+          <input type="text" id="nombreTrabajador" placeholder="Nombre de la persona">
+        </div>
+
+        <div class="form-group">
+          <label for="cedulaTrabajador">Cédula:</label>
+          <input type="text" id="cedulaTrabajador" placeholder="0-0000-0000">
+        </div>
+
+        <div class="form-group">
+          <label for="vecino">Lugar de vecindad / dirección:</label>
+          <input type="text" id="vecino" placeholder="Ej.: Guápiles, Pococí, Limón, 250 m sur de...">
+        </div>
+
+        <div class="form-group">
+          <label for="correo">Correo electrónico:</label>
+          <input type="email" id="correo" placeholder="correo@ejemplo.com">
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">Teléfono:</label>
+          <input type="text" id="telefono" placeholder="0000-0000">
+        </div>
+
+        <div class="form-group">
+          <label for="mostrarOpciones">Opciones PRO:</label>
+          <select id="mostrarOpciones">
+            <option value="todo" selected>Fondo + Watermark + QR + Sello</option>
+            <option value="sobrio">Sin fondo (solo watermark + QR + sello)</option>
+            <option value="minimo">Solo QR (sin watermark/sello/fondo)</option>
+          </select>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="nombreTrabajador">Nombre completo del trabajador / participante:</label>
-        <input type="text" id="nombreTrabajador" placeholder="Nombre de la persona">
-      </div>
-
-      <div class="form-group">
-        <label for="cedulaTrabajador">Cédula:</label>
-        <input type="text" id="cedulaTrabajador" placeholder="0-0000-0000">
-      </div>
-
-      <div class="form-group">
-        <label for="vecino">Lugar de vecindad / dirección:</label>
-        <input type="text" id="vecino" placeholder="Ej.: Guápiles, Pococí, Limón, 250 m sur de...">
-      </div>
-
-      <div class="form-group">
-        <label for="correo">Correo electrónico:</label>
-        <input type="email" id="correo" placeholder="correo@ejemplo.com">
-      </div>
-
-      <div class="form-group">
-        <label for="telefono">Teléfono:</label>
-        <input type="text" id="telefono" placeholder="0000-0000">
-      </div>
-
-      <div class="form-group">
-        <label for="tipoLicencia">Tipo de licencia a solicitar:</label>
-        <select id="tipoLicencia">
-          <option value="D1">D1 - Tractor de llanta</option>
-          <option value="D2">D2 - Tractor de oruga</option>
-          <option value="D3" selected>D3 - Montacargas / equipo especial</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Modo de carta (responsabilidad):</label>
-        <label class="radio-inline">
-          <input type="radio" name="modoResp" value="con" checked>
-          Con responsabilidad patronal
-        </label>
-        <label class="radio-inline">
-          <input type="radio" name="modoResp" value="sin">
-          Sin responsabilidad patronal
-        </label>
+      <div class="radios">
+        <span style="font-weight:bold;">Modo de carta:</span>
+        <label><input type="radio" name="modoResp" value="con" checked> Con responsabilidad patronal</label>
+        <label><input type="radio" name="modoResp" value="sin"> Sin responsabilidad patronal</label>
       </div>
 
       <button type="button" onclick="generarCarta()">Generar carta</button>
       <button type="button" onclick="copiarTexto()">Copiar texto plano</button>
+      <button type="button" onclick="descargarPDF()">Descargar PDF (multipágina)</button>
+      <button type="button" onclick="descargarWord()">Descargar Word</button>
     </div>
 
     <div class="carta-wrapper">
-      <div id="carta" class="carta"></div>
+      <div id="carta" class="carta fondo watermark" data-watermark="">
+        <div class="contenido" id="cartaContenido"></div>
+      </div>
     </div>
 
     <div class="acciones">
       <button type="button" onclick="window.print()">Imprimir / Guardar como PDF</button>
-      <button type="button" onclick="abrirVistaLimpia()">Vista limpia para PDF</button>
-      <button type="button" onclick="descargarPDF()">Descargar PDF</button>
-      <button type="button" onclick="descargarWord()">Descargar Word</button>
+      <button type="button" onclick="abrirVistaLimpia()">Vista limpia</button>
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+  <!-- html2pdf -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- QRCode -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <script>
     const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
     const DIAS  = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
 
-    function formatearFecha(fecha) {
+    // === Datos fijos ===
+    const PATRONO_NOMBRE = "Neal Ariel Acosta Castro";
+    const PATRONO_CEDULA = "702620124"; // ✅ cédula física
+    const EMPRESA_NOMBRE = "Acosta Transporte y Maquinaria Pesada A&D";
+    const EMPRESA_LUGAR  = "Guápiles, Pococí, Limón";
+    const EMPRESA_TEL    = "8977-5801";
+    const LOGO_SRC       = "logoA&D.jpg"; // ✅ tu logo
+
+    function formatearFecha(fecha){
       return `${DIAS[fecha.getDay()]} ${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
     }
-
-    function formatearFechaConDia(fecha) {
+    function formatearFechaConDia(fecha){
       return `${DIAS[fecha.getDay()]} ${fecha.getDate()} de ${MESES[fecha.getMonth()]} del ${fecha.getFullYear()}`;
     }
-
-    function ajustarFechaHabil(fecha) {
+    function ajustarFechaHabil(fecha){
       const f = new Date(fecha);
       if (f.getDay() === 6) f.setDate(f.getDate() - 1);
       if (f.getDay() === 0) f.setDate(f.getDate() - 2);
       return f;
     }
-
-    function generarFechaInicioTrabajo(base) {
+    function generarFechaInicioTrabajo(base){
       const f = new Date(base);
       f.setMonth(f.getMonth() - 1);
       f.setDate(f.getDate() - (3 + Math.floor(Math.random() * 3)));
       return f;
     }
-
-    function tipoMaquinariaFrase(tipo) {
-      if (tipo === "D1") {
-        return "tractor de llanta, maquinaria especial agrícola autorizada para la licencia tipo D1";
-      } else if (tipo === "D2") {
-        return "tractor de oruga, maquinaria especial de construcción autorizada para la licencia tipo D2";
-      } else {
-        return "montacargas y equipo especial de carga (maquinaria de trabajo autorizada para la licencia tipo D3)";
-      }
+    function tipoMaquinariaFrase(tipo){
+      if (tipo === "D1") return "tractor de llanta, maquinaria especial agrícola autorizada para la licencia tipo D1";
+      if (tipo === "D2") return "tractor de oruga, maquinaria especial de construcción autorizada para la licencia tipo D2";
+      return "montacargas y equipo especial de carga (maquinaria de trabajo autorizada para la licencia tipo D3)";
     }
-
-    function nombreMaquinariaCorto(tipo) {
+    function nombreMaquinariaCorto(tipo){
       if (tipo === "D1") return "tractor de llanta";
       if (tipo === "D2") return "tractor de oruga";
       return "montacargas";
     }
-
-    function obtenerModoResponsabilidad() {
+    function obtenerModoResponsabilidad(){
       const radios = document.getElementsByName("modoResp");
-      for (const r of radios) {
-        if (r.checked) return r.value;
-      }
+      for (const r of radios) if (r.checked) return r.value;
       return "con";
     }
 
-    function generarCarta() {
-      const sedeCiudad = document.getElementById("sedeCiudad").value.trim() || "Guápiles";
-      const nombre     = document.getElementById("nombreTrabajador").value.trim()   || "_____________________________";
-      const cedula     = document.getElementById("cedulaTrabajador").value.trim()   || "___________";
-      const vecino     = document.getElementById("vecino").value.trim()             || "_______________________";
-      const correo     = document.getElementById("correo").value.trim()             || "_______________________";
-      const telefono   = document.getElementById("telefono").value.trim()           || "___________";
-      const tipo       = document.getElementById("tipoLicencia").value;
-      const modo       = obtenerModoResponsabilidad();
+    function aplicarModoVisual(){
+      const modo = document.getElementById("mostrarOpciones").value;
+      const carta = document.getElementById("carta");
+      // reset
+      carta.classList.remove("fondo","watermark");
+      if (modo === "todo"){
+        carta.classList.add("fondo","watermark");
+      } else if (modo === "sobrio"){
+        carta.classList.add("watermark");
+      } else if (modo === "minimo"){
+        // sin fondo, sin watermark
+      }
+    }
 
-      const hoy        = ajustarFechaHabil(new Date());
-      const fechaInicio= generarFechaInicioTrabajo(hoy);
+    function buildEncabezado(){
+      return `
+        <div class="encabezado">
+          <img class="logo" src="${LOGO_SRC}" alt="Logo" onerror="this.style.display='none'">
+          <div class="empresa">
+            <b>${EMPRESA_NOMBRE}</b><br>
+            Cédula física: <b>${PATRONO_CEDULA}</b><br>
+            Tel.: <b>${EMPRESA_TEL}</b>
+          </div>
+        </div>
+      `;
+    }
+
+    function buildMetaQRySello(qrText, hoy, tipo){
+      return `
+        <div class="meta">
+          <div class="qr-box">
+            <div id="qr"></div>
+            <div class="mini">
+              Verificación rápida<br>
+              ${hoy.getDate()}/${hoy.getMonth()+1}/${hoy.getFullYear()} · ${tipo}
+            </div>
+          </div>
+
+          <div class="sello">
+            <div class="titulo">Sello Digital / Constancia</div>
+            <div class="texto">
+              Documento emitido por <b>${EMPRESA_NOMBRE}</b> a solicitud del interesado, para trámite ante Educación Vial (MOPT).<br>
+              Firmante: <b>${PATRONO_NOMBRE}</b> · Cédula: <b>${PATRONO_CEDULA}</b>.<br>
+              Código/QR contiene los datos básicos de esta certificación.
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function generarCarta(){
+      aplicarModoVisual();
+
+      const sedeCiudad = document.getElementById("sedeCiudad").value.trim() || "Guápiles";
+      const nombre     = document.getElementById("nombreTrabajador").value.trim() || "_____________________________";
+      const cedula     = document.getElementById("cedulaTrabajador").value.trim() || "___________";
+      const vecino     = document.getElementById("vecino").value.trim() || "_______________________";
+      const correo     = document.getElementById("correo").value.trim() || "_______________________";
+      const telefono   = document.getElementById("telefono").value.trim() || "___________";
+      const tipo       = document.getElementById("tipoLicencia").value;
+      const modoResp   = obtenerModoResponsabilidad();
+
+      const hoy = ajustarFechaHabil(new Date());
+      const fechaInicio = generarFechaInicioTrabajo(hoy);
 
       const fechaCartaLinea = formatearFecha(hoy);
       const fechaInicioTexto= formatearFechaConDia(fechaInicio);
@@ -261,144 +416,186 @@
       const maquinariaFrase = tipoMaquinariaFrase(tipo);
       const maquinariaCorta = nombreMaquinariaCorto(tipo);
 
-      let htmlCarta = "";
+      // Watermark dinámico
+      document.getElementById("carta").setAttribute("data-watermark", EMPRESA_NOMBRE.toUpperCase());
 
-      if (modo === "con") {
-        htmlCarta = `
-<b>${fechaCartaLinea}</b><br><br>
+      // QR data (texto)
+      const qrText =
+`EMPRESA: ${EMPRESA_NOMBRE}
+PATRONO: ${PATRONO_NOMBRE} - ${PATRONO_CEDULA}
+TRABAJADOR/PART.: ${nombre} - ${cedula}
+LICENCIA: ${tipo} (${maquinariaCorta})
+SEDE: ${sedeCiudad}
+FECHA CARTA: ${fechaCartaLinea}
+CONTACTO: ${EMPRESA_TEL}`;
 
-<b>Señores:</b><br>
-<b>${sedeLinea}</b><br>
-<b>Departamento de Evaluación de Conductores</b><br>
-<b>Dirección General de Educación Vial</b><br>
-<b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
+      let cuerpo = "";
 
-<b>Estimados señores:</b><br>
-Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi condición de <b>Patrón</b> de la empresa <b>Acosta Transporte y Maquinaria Pesada</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñándose como operador de <b>${maquinariaFrase}</b>.<br><br>
+      if (modoResp === "con"){
+        cuerpo = `
+          <b>${fechaCartaLinea}</b><br><br>
 
-Certifico que el señor <b>${nombre}</b> opera <b>${maquinariaCorta}</b> y cuenta con amplia experiencia en el manejo de dicha maquinaria, ejecutando sus labores de forma responsable, segura y competente.<br><br>
+          <b>Señores:</b><br>
+          <b>${sedeLinea}</b><br>
+          <b>Departamento de Evaluación de Conductores</b><br>
+          <b>Dirección General de Educación Vial</b><br>
+          <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
 
-Por lo anterior, solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la licencia tipo <b>${tipo}</b>, para la operación de <b>${maquinariaCorta}</b> indicada en la presente certificación.<br><br>
+          <b>Estimados señores:</b><br>
+          Por medio de la presente, yo, <b>${PATRONO_NOMBRE}</b>, cédula de identidad <b>${PATRONO_CEDULA}</b>, en mi condición de <b>Patrón</b> de <b>${EMPRESA_NOMBRE}</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñándose como operador de <b>${maquinariaFrase}</b>.<br><br>
 
-Agradezco de antemano la atención prestada a esta solicitud.<br><br>
+          Certifico que el señor <b>${nombre}</b> opera <b>${maquinariaCorta}</b> y cuenta con experiencia en el manejo de dicha maquinaria, ejecutando sus labores de forma responsable, segura y competente.<br><br>
 
-Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
+          Por lo anterior, solicito de la manera más atenta continuar con el trámite correspondiente para la confección de la licencia tipo <b>${tipo}</b>, para la operación de <b>${maquinariaCorta}</b> indicada en la presente certificación.<br><br>
 
-Atentamente,<br><br>
-___________________________<br>
-<b>Neal Ariel Acosta Castro</b><br>
-<b>Patrón</b><br>
-<b>Acosta Transporte y Maquinaria Pesada</b><br>
-Cédula: <b>7-0262-0124</b><br>
-Tel.: <b>8977-5801</b>`;
+          Agradezco de antemano la atención prestada a esta solicitud.<br><br>
+
+          Se extiende la presente en <b>${EMPRESA_LUGAR}</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
+
+          Atentamente,<br><br>
+          ___________________________<br>
+          <b>${PATRONO_NOMBRE}</b><br>
+          <b>Patrón</b><br>
+          <b>${EMPRESA_NOMBRE}</b><br>
+          Cédula: <b>${PATRONO_CEDULA}</b><br>
+          Tel.: <b>${EMPRESA_TEL}</b>
+        `;
       } else {
-        htmlCarta = `
-<b>${fechaCartaLinea}</b><br><br>
+        cuerpo = `
+          <b>${fechaCartaLinea}</b><br><br>
 
-<b>Señores:</b><br>
-<b>${sedeLinea}</b><br>
-<b>Departamento de Evaluación de Conductores</b><br>
-<b>Dirección General de Educación Vial</b><br>
-<b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
+          <b>Señores:</b><br>
+          <b>${sedeLinea}</b><br>
+          <b>Departamento de Evaluación de Conductores</b><br>
+          <b>Dirección General de Educación Vial</b><br>
+          <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
 
-<b>Estimados señores:</b><br>
-Por medio de la presente, yo, <b>Neal Ariel Acosta Castro</b>, cédula de identidad <b>7-0262-0124</b>, en mi calidad de <b>Patrón</b> de la empresa <b>Acosta Transporte y Maquinaria Pesada</b>, personería jurídica <b>3-101-899284</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${maquinariaFrase}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br><br>
+          <b>Estimados señores:</b><br>
+          Por medio de la presente, yo, <b>${PATRONO_NOMBRE}</b>, cédula de identidad <b>${PATRONO_CEDULA}</b>, en mi calidad de <b>Patrón</b> de <b>${EMPRESA_NOMBRE}</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${maquinariaFrase}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br><br>
 
-Durante este período, el señor <b>${nombre}</b> ha demostrado responsabilidad, disciplina y habilidades suficientes para desempeñarse de manera segura en las operaciones prácticas del equipo indicado.<br><br>
+          Durante este período, el señor <b>${nombre}</b> ha demostrado responsabilidad, disciplina y habilidades suficientes para desempeñarse de manera segura en las operaciones prácticas del equipo indicado.<br><br>
 
-La presente constancia se emite únicamente para fines de <b>certificación de experiencia operativa</b> ante la Dirección General de Educación Vial, para la tramitación de la licencia tipo <b>${tipo}</b>.<br><br>
+          La presente constancia se emite únicamente para fines de <b>certificación de experiencia operativa</b> ante la Dirección General de Educación Vial, para la tramitación de la licencia tipo <b>${tipo}</b>.<br><br>
 
-<b>Esta certificación es de carácter exclusivamente formativo y no constituye relación laboral, vínculo contractual, subordinación, remuneración, ni genera derechos laborales de ningún tipo para el participante.</b><br><br>
+          <b>Esta certificación es de carácter exclusivamente formativo y no constituye relación laboral, vínculo contractual, subordinación, remuneración, ni genera derechos laborales de ningún tipo para el participante.</b><br><br>
 
-Agradezco de antemano la atención prestada a la presente.<br><br>
+          Agradezco de antemano la atención prestada a la presente.<br><br>
 
-Se extiende la presente en <b>Guápiles, Pococí, Limón</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
+          Se extiende la presente en <b>${EMPRESA_LUGAR}</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
 
-Atentamente,<br><br>
-___________________________<br>
-<b>Neal Ariel Acosta Castro</b><br>
-<b>Patrón</b><br>
-<b>Acosta Transporte y Maquinaria Pesada</b><br>
-Cédula: <b>7-0262-0124</b><br>
-Tel.: <b>8977-5801</b>`;
+          Atentamente,<br><br>
+          ___________________________<br>
+          <b>${PATRONO_NOMBRE}</b><br>
+          <b>Patrón</b><br>
+          <b>${EMPRESA_NOMBRE}</b><br>
+          Cédula: <b>${PATRONO_CEDULA}</b><br>
+          Tel.: <b>${EMPRESA_TEL}</b>
+        `;
       }
 
-      document.getElementById("carta").innerHTML = htmlCarta;
+      const modoVisual = document.getElementById("mostrarOpciones").value;
+      const incluirTodo = (modoVisual !== "minimo");
+      const meta = incluirTodo ? buildMetaQRySello(qrText, hoy, tipo) : `<div class="meta"><div class="qr-box"><div id="qr"></div><div class="mini">Verificación rápida</div></div></div>`;
+
+      const htmlFinal = `
+        ${buildEncabezado()}
+        ${meta}
+        ${cuerpo}
+      `;
+
+      document.getElementById("cartaContenido").innerHTML = htmlFinal;
+
+      // Render QR
+      const qrDiv = document.getElementById("qr");
+      qrDiv.innerHTML = "";
+      new QRCode(qrDiv, {
+        text: qrText,
+        width: 100,
+        height: 100,
+        correctLevel: QRCode.CorrectLevel.M
+      });
     }
 
-    function copiarTexto() {
-      const carta = document.getElementById("carta").innerText;
-      if (!carta.trim()) return;
-      navigator.clipboard.writeText(carta)
-        .then(() => alert("Texto copiado."))
-        .catch(() => alert("No se pudo copiar automáticamente, pero podés copiarlo a mano."));
+    function copiarTexto(){
+      const txt = document.getElementById("carta").innerText;
+      if (!txt.trim()) return;
+      navigator.clipboard.writeText(txt)
+        .then(()=>alert("Texto copiado."))
+        .catch(()=>alert("No se pudo copiar automáticamente."));
     }
 
-    function abrirVistaLimpia() {
+    function abrirVistaLimpia(){
       const cartaHTML = document.getElementById("carta").innerHTML;
-      if (!cartaHTML.trim()) return;
-      const win = window.open('', '_blank');
-      win.document.write(`<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Carta lista para PDF</title>
-  <style>
-    body {
-      font-family: "Times New Roman", serif;
-      margin: 40px;
-      font-size: 13px;
-      line-height: 1.1;
-    }
-  </style>
-</head>
-<body>${cartaHTML}</body>
-</html>`);
+      const win = window.open("", "_blank");
+      win.document.write(`<!DOCTYPE html><html lang="es"><head>
+        <meta charset="UTF-8"><title>Carta - Vista limpia</title>
+        <style>
+          body{font-family:"Times New Roman",serif;margin:40px;font-size:13px;line-height:1.15;}
+          .carta{position:relative;}
+          .encabezado{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:10px;padding-bottom:10px;border-bottom:2px solid #C9A227;}
+          .logo{width:160px;max-height:90px;object-fit:contain;}
+          .empresa{text-align:right;font-size:12px;line-height:1.15;}
+          .empresa b{font-size:13px;}
+          .meta{display:flex;justify-content:space-between;gap:14px;margin:10px 0 8px 0;}
+          .qr-box{width:120px;border:1px solid rgba(0,0,0,.15);border-radius:10px;padding:8px;text-align:center;}
+          #qr{width:100px;height:100px;margin:0 auto;}
+          .mini{font-size:10px;line-height:1.1;margin-top:6px;}
+          .sello{flex:1;border:1px dashed rgba(0,0,0,.25);border-radius:12px;padding:10px 12px;}
+          .titulo{font-weight:700;letter-spacing:.6px;font-size:12px;text-transform:uppercase;margin-bottom:6px;}
+          .texto{font-size:11px;line-height:1.15;}
+        </style>
+      </head><body>${cartaHTML}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+      <script>
+        // Re-render QR en ventana nueva
+        const mainQr = window.opener?.document?.querySelector("#qr img")?.getAttribute("src");
+        // Si el QR ya existe como img, lo copiamos; si no, no pasa nada.
+      <\/script>
+      </body></html>`);
       win.document.close();
     }
 
-    function descargarPDF() {
+    function descargarPDF(){
       const carta = document.getElementById("carta");
-      if (!carta.innerText.trim()) return;
       const opt = {
-        margin: 5,
-        filename: 'Carta_Licencia_D.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['avoid-all'] }   // 👉 forzar UNA sola página
+        margin: [10, 10, 10, 10],
+        filename: "Carta_Licencia_D_A&D.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: ["css", "legacy"] } // ✅ multipágina real
       };
       html2pdf().set(opt).from(carta).save();
     }
 
-    function descargarWord() {
+    function descargarWord(){
       const cartaHTML = document.getElementById("carta").innerHTML;
-      if (!cartaHTML.trim()) return;
-
       const contenido = `
 <html xmlns:o='urn:schemas-microsoft-com:office:office'
       xmlns:w='urn:schemas-microsoft-com:office:word'
       xmlns='http://www.w3.org/TR/REC-html40'>
 <head><meta charset="UTF-8"><title>Carta</title></head>
-<body style="font-family:'Times New Roman',serif;font-size:13px;line-height:1.1;">
+<body style="font-family:'Times New Roman',serif;font-size:13px;line-height:1.15;">
 ${cartaHTML}
 </body></html>`;
-
-      const blob = new Blob(['\ufeff', contenido], {
-        type: 'application/msword'
-      });
-
-      const url  = URL.createObjectURL(blob);
+      const blob = new Blob(['\ufeff', contenido], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'Carta_Licencia_D.doc';
+      link.download = 'Carta_Licencia_D_A&D.doc';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     }
 
-    window.addEventListener("DOMContentLoaded", generarCarta);
+    // Auto actualizar
+    document.addEventListener("DOMContentLoaded", () => {
+      ["sedeCiudad","nombreTrabajador","cedulaTrabajador","vecino","correo","telefono","tipoLicencia","mostrarOpciones"]
+        .forEach(id => document.getElementById(id).addEventListener("input", generarCarta));
+      document.getElementsByName("modoResp").forEach(r => r.addEventListener("change", generarCarta));
+      generarCarta();
+    });
   </script>
 </body>
 </html>
