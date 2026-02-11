@@ -73,16 +73,11 @@
       box-shadow:0 0 10px rgba(0,0,0,.13);
       padding:26px 38px;
 
+      /* ✅ MÁS FORMAL: aire + interlineado */
       font-size:13.5px;
       line-height:1.35;
 
       overflow:hidden;
-    }
-
-    /* ✅ Súper formal (toggle) */
-    .carta.super-formal{
-      font-size:14.5px;
-      line-height:1.6;
     }
 
     /* ===== Fondo elegante (opcional) ===== */
@@ -190,6 +185,7 @@
       text-align:right;
     }
 
+    /* ✅ imprimir: más “aire” y que llene hoja */
     @page{
       size:A4;
       margin:1.8cm;
@@ -204,15 +200,11 @@
         max-width:none;
         border-radius:0;
         box-shadow:none;
+
+        /* ✅ aquí es donde se ve formal */
         padding:0;
         font-size:14px;
         line-height:1.45;
-      }
-
-      /* si está en súper formal, respetarlo al imprimir */
-      .carta.super-formal{
-        font-size:14.8px;
-        line-height:1.6;
       }
 
       .encabezado{
@@ -220,6 +212,7 @@
         padding-bottom:10px;
       }
 
+      /* Si querés que el fondo NO salga impreso */
       .carta.fondo::before{display:none;}
     }
   </style>
@@ -291,9 +284,6 @@
       <button type="button" onclick="copiarTexto()">Copiar texto plano</button>
       <button type="button" onclick="descargarPDF()">Descargar PDF (multipágina)</button>
       <button type="button" onclick="descargarWord()">Descargar Word</button>
-
-      <!-- ✅ BOTÓN NUEVO -->
-      <button type="button" id="btnSuperFormal" onclick="toggleSuperFormal()">Súper formal (interlineado 1.6)</button>
     </div>
 
     <div class="carta-wrapper">
@@ -355,19 +345,6 @@
       const radios = document.getElementsByName("modoResp");
       for (const r of radios) if (r.checked) return r.value;
       return "con";
-    }
-
-    // ✅ NUEVO: toggle súper formal
-    function toggleSuperFormal(){
-      const carta = document.getElementById("carta");
-      carta.classList.toggle("super-formal");
-
-      const btn = document.getElementById("btnSuperFormal");
-      const activo = carta.classList.contains("super-formal");
-      btn.textContent = activo ? "Normal (interlineado estándar)" : "Súper formal (interlineado 1.6)";
-
-      // refrescar por si el usuario quiere ver el ajuste inmediato
-      generarCarta();
     }
 
     function aplicarModoVisual(){
