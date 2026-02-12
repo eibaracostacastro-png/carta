@@ -123,7 +123,7 @@
     .encabezado{
       display:flex;
       align-items:center;
-      justify-content:flex-start; /* logo a la izquierda */
+      justify-content:flex-start;
       margin-bottom:12px;
       padding-bottom:10px;
       border-bottom:2px solid var(--oro);
@@ -305,8 +305,12 @@
     const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
     const DIAS  = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
 
-    const JEFE_NOMBRE    = "Neal Ariel Acosta Castro";
-    const JEFE_CEDULA    = "702620124";
+    // ✅ Cédula con guiones (profesional)
+    const JEFE_NOMBRE          = "Neal Ariel Acosta Castro";
+    const JEFE_CEDULA_GUIONES  = "7-0262-0124";
+    // ✅ Si en algún lado ocupás sin guiones:
+    const JEFE_CEDULA_NUMERICA = "702620124";
+
     const EMPRESA_NOMBRE = "Acosta Transporte y Maquinaria Pesada A&D";
     const EMPRESA_LUGAR  = "Guápiles, Pococí, Limón";
     const EMPRESA_TEL    = "8977-5801";
@@ -375,7 +379,6 @@
       }
     }
 
-    // ✅ Encabezado SOLO logo
     function buildEncabezado(){
       return `
         <div class="encabezado">
@@ -399,7 +402,7 @@
             <div class="titulo">Sello Digital / Constancia</div>
             <div class="texto">
               Documento emitido por <b>${EMPRESA_NOMBRE}</b> a solicitud del interesado, para trámite ante Educación Vial (MOPT).<br>
-              Firmante: <b>${JEFE_NOMBRE}</b> · Cédula: <b>${JEFE_CEDULA}</b>.<br>
+              Firmante: <b>${JEFE_NOMBRE}</b> · Cédula: <b>${JEFE_CEDULA_GUIONES}</b>.<br>
               Código/QR contiene los datos básicos de esta certificación.
             </div>
           </div>
@@ -415,6 +418,18 @@
             <div class="mini">Verificación rápida</div>
           </div>
         </div>
+      `;
+    }
+
+    // ✅ Firma final (orden ajustado: Nombre / Cédula / Empresa / Tel)
+    function buildFirma(){
+      return `
+        Atentamente,<br><br>
+        ___________________________<br>
+        <b>${JEFE_NOMBRE}</b><br>
+        Cédula: <b>${JEFE_CEDULA_GUIONES}</b><br>
+        <b>${EMPRESA_NOMBRE}</b><br>
+        Tel.: <b>${EMPRESA_TEL}</b>
       `;
     }
 
@@ -449,7 +464,7 @@
 
       const qrText =
 `EMPRESA: ${EMPRESA_NOMBRE}
-JEFE: ${JEFE_NOMBRE} - ${JEFE_CEDULA}
+JEFE: ${JEFE_NOMBRE} - ${JEFE_CEDULA_GUIONES}
 TRABAJADOR/PART.: ${nombre} - ${cedula}
 LICENCIA: ${tipo} (${maquinariaCorta})
 SEDE: ${sedeCiudad}
@@ -469,7 +484,7 @@ CONTACTO: ${EMPRESA_TEL}`;
           <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
 
           <b>Estimados señores:</b><br>
-          Por medio de la presente, yo, <b>${JEFE_NOMBRE}</b>, cédula de identidad <b>${JEFE_CEDULA}</b>, en mi condición de <b>${CARGO_TITULO}</b> de <b>${EMPRESA_NOMBRE}</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñándose como operador de <b>${maquinariaFrase}</b>.<br><br>
+          Por medio de la presente, yo, <b>${JEFE_NOMBRE}</b>, cédula de identidad <b>${JEFE_CEDULA_GUIONES}</b>, en mi condición de <b>${CARGO_TITULO}</b> de <b>${EMPRESA_NOMBRE}</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, trabaja para esta empresa desde el día <b>${fechaInicioTexto}</b>, desempeñándose como operador de <b>${maquinariaFrase}</b>.<br><br>
 
           Certifico que el señor <b>${nombre}</b> opera <b>${maquinariaCorta}</b> y cuenta con experiencia en el manejo de dicha maquinaria, ejecutando sus labores de forma responsable, segura y competente.<br><br>
 
@@ -479,13 +494,7 @@ CONTACTO: ${EMPRESA_TEL}`;
 
           Se extiende la presente en <b>${EMPRESA_LUGAR}</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
 
-          Atentamente,<br><br>
-          ___________________________<br>
-          <b>${JEFE_NOMBRE}</b><br>
-          <b>${CARGO_TITULO}</b><br>
-          <b>${EMPRESA_NOMBRE}</b><br>
-          Cédula: <b>${JEFE_CEDULA}</b><br>
-          Tel.: <b>${EMPRESA_TEL}</b>
+          ${buildFirma()}
         `;
       } else {
         cuerpo = `
@@ -498,7 +507,7 @@ CONTACTO: ${EMPRESA_TEL}`;
           <b>Ministerio de Obras Públicas y Transportes (MOPT)</b><br><br>
 
           <b>Estimados señores:</b><br>
-          Por medio de la presente, yo, <b>${JEFE_NOMBRE}</b>, cédula de identidad <b>${JEFE_CEDULA}</b>, en mi calidad de <b>${CARGO_TITULO}</b> de <b>${EMPRESA_NOMBRE}</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${maquinariaFrase}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br><br>
+          Por medio de la presente, yo, <b>${JEFE_NOMBRE}</b>, cédula de identidad <b>${JEFE_CEDULA_GUIONES}</b>, en mi calidad de <b>${CARGO_TITULO}</b> de <b>${EMPRESA_NOMBRE}</b>, hago constar que el señor <b>${nombre}</b>, cédula de identidad <b>${cedula}</b>, vecino de <b>${vecino}</b>, correo electrónico <b>${correo}</b> y teléfono <b>${telefono}</b>, ha participado en <b>prácticas operativas supervisadas</b> relacionadas con la manipulación y operación de <b>${maquinariaFrase}</b>, en fechas comprendidas desde el día <b>${fechaInicioTexto}</b>.<br><br>
 
           Durante este período, el señor <b>${nombre}</b> ha demostrado responsabilidad, disciplina y habilidades suficientes para desempeñarse de manera segura en las operaciones prácticas del equipo indicado.<br><br>
 
@@ -510,13 +519,7 @@ CONTACTO: ${EMPRESA_TEL}`;
 
           Se extiende la presente en <b>${EMPRESA_LUGAR}</b>, a los <b>${hoy.getDate()}</b> días del mes de <b>${MESES[hoy.getMonth()]}</b> del año <b>${hoy.getFullYear()}</b>.<br><br>
 
-          Atentamente,<br><br>
-          ___________________________<br>
-          <b>${JEFE_NOMBRE}</b><br>
-          <b>${CARGO_TITULO}</b><br>
-          <b>${EMPRESA_NOMBRE}</b><br>
-          Cédula: <b>${JEFE_CEDULA}</b><br>
-          Tel.: <b>${EMPRESA_TEL}</b>
+          ${buildFirma()}
         `;
       }
 
